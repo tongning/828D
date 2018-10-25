@@ -21,7 +21,7 @@
 
             game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
             game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
-            game.load.image('car', 'assets/sprites/clown.png');
+            game.load.image('car', 'assets/sprites/ufo.png');
 
         }
 
@@ -41,7 +41,7 @@
 
             layer.resizeWorld();
 
-            sprite = game.add.sprite(450, 80, 'car');
+            sprite = game.add.sprite(450, 80, 'ufo');
             sprite.anchor.setTo(0.5, 0.5);
 
             game.physics.enable(sprite, Phaser.Physics.ARCADE);
@@ -50,20 +50,9 @@
 
             cursors = game.input.keyboard.createCursorKeys();
 
-            game.input.onDown.addOnce(swapTiles, this);
 
         }
 
-        function swapTiles() {
-
-            //  This will swap every instance of tile 30 (empty ground) with tile 31 (the cactus plant), it also does the opposite,
-            //  so tile 31 (cactus plants) will become empty ground (tile 30). It does this across the whole layer of the map.
-
-            //  You can also pass in x, y, width, height values to control the area in which the swap happens
-
-            map.swap(30, 31);
-
-        }
 
         function update() {
 
