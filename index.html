@@ -30,7 +30,7 @@
         var layer;
 
         var sprite, diamonds;
-        var scoreText, diamondsCollected;
+        var scoreText, diamondsCollected, score;
 
         var playerSpeed;
 
@@ -44,7 +44,9 @@
             create_sprite()
             generate_diamonds(12)
             diamonds_collected = 0;
-            scoreText = 'Score: 0'
+            score = 0;
+            scoreText = 'Score: ' + score;
+
 
             // scoreText = game.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
 
@@ -136,7 +138,7 @@
         function collect_diamond (player, diamond) {
             diamond.kill();
             diamondsCollected += 1;
-            score = diamondsCollected * 10;
+            score += 10;
             scoreText = 'Score: ' + score;
         }
     </script>
