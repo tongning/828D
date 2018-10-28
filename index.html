@@ -64,10 +64,11 @@
                 //You can then count which block belongs to what number. 
 
                 // There is a minor bug, 
+                multFactor = 5
                 const wall_indx_set = new Set([1, 2, 3, 9, 10, 11, 17, 18, 19, 20, 21, 28, 29, -1]);
-                mv_tile = map.getTile(layer.getTileX(phase_x ) + mv_x ,
-                   layer.getTileY(phase_y) + mv_y, m_layer, true) // get the index of the tile.
-                tile_indx = (mv_tile != null) ? mv_tile.index : -1
+                mv_tile = map.getTile(layer.getTileX(phase_x  + mv_x * multFactor ),
+                   layer.getTileY(phase_y + mv_y * multFactor),  m_layer, true) // get the index of the tile.
+                tile_indx = ((mv_tile != null) && (mv_tile.x != 0) && (mv_tile.y != 0) ) ? mv_tile.index : -1
 
                 //return true
                 return wall_indx_set.has(tile_indx) // if has, it collides. Else, it does not. 
