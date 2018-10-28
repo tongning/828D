@@ -18,7 +18,6 @@
         var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', { preload: preload, create: create, update: update, render: render });
 
         function preload() {
-
             game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
             game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
             game.load.image('ufo', 'assets/sprites/ufo.png');
@@ -26,17 +25,17 @@
 
         }
 
+
         var map, layer, cursors;
         var layer;
 
         var sprite, diamonds;
-        var scoreText, diamonds_collected;
+        var scoreText, diamondsCollected;
 
-        var player_speed;
+        var playerSpeed;
 
 
         function create() {
-
             map = game.add.tilemap('desert');
             map.addTilesetImage('Desert', 'tiles');
             layer = map.createLayer('Ground');
@@ -84,13 +83,13 @@
             sprite.body.velocity.y = 0;
             // sprite.body.angularVelocity = 0;
             if (cursors.left.isDown) {
-                sprite.body.velocity.x = -player_speed;
+                sprite.body.velocity.x = -playerSpeed;
             } else if (cursors.right.isDown) {
-                sprite.body.velocity.x = player_speed;
+                sprite.body.velocity.x = playerSpeed;
             } else if (cursors.up.isDown) { 
-                sprite.body.velocity.y = -player_speed;
+                sprite.body.velocity.y = -playerSpeed;
             } else if (cursors.down.isDown) {
-                sprite.body.velocity.y = player_speed;
+                sprite.body.velocity.y = playerSpeed;
             } 
 
             game.physics.arcade.overlap(sprite, diamonds, collect_diamond, null, this);
@@ -111,7 +110,7 @@
             sprite = game.add.sprite(450, 80, 'ufo');
             sprite.anchor.setTo(0.5, 0.5);
             game.physics.arcade.enable(sprite);
-            player_speed = 250;
+            playerSpeed = 250;
 
             game.camera.follow(sprite);
             cursors = game.input.keyboard.createCursorKeys();
@@ -136,8 +135,8 @@
 
         function collect_diamond (player, diamond) {
             diamond.kill();
-            diamonds_collected += 1;
-            score = diamonds_collected * 10;
+            diamondsCollected += 1;
+            score = diamondsCollected * 10;
             scoreText = 'Score: ' + score;
         }
     </script>
