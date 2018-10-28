@@ -45,8 +45,9 @@
             create_sprite()
             generate_diamonds(12)
             diamonds_collected = 0;
+            scoreText = 'Score: 0'
 
-            scoreText = game.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
+            // scoreText = game.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
 
 
         }
@@ -76,6 +77,7 @@
         //     }
         // }
 
+
         function update() {
             //game.physics.arcade.collide(sprite, layer);
             sprite.body.velocity.x = 0;
@@ -92,15 +94,16 @@
             } 
 
             game.physics.arcade.overlap(sprite, diamonds, collect_diamond, null, this);
-            
+
             //console.log(map.getTile(layer.getTileX(sprite.x),layer.getTileY(sprite.y),layer, true).index)
         }
+
 
         function render() {
             game.debug.text('Collect All the Diamonds!', 32, 32, 'rgb(0,0,0)');
             game.debug.text('Tile X: ' + layer.getTileX(sprite.x), 32, 48, 'rgb(0,0,0)');
             game.debug.text('Tile Y: ' + layer.getTileY(sprite.y), 32, 64, 'rgb(0,0,0)');
-
+            game.debug.text(scoreText, 32, 90, 'rgb(0,0,0)');
         }
 
 
@@ -135,7 +138,7 @@
             diamond.kill();
             diamonds_collected += 1;
             score = diamonds_collected * 10;
-            scoreText.text = 'Score: ' + score;
+            scoreText = 'Score: ' + score;
         }
     </script>
 </body>
