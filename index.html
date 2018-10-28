@@ -26,17 +26,12 @@
 
         }
 
-        var map;
+        var map, layer, cursors;
         var layer;
-        var tileW;
-        var tileH;
+        var tileW, tileH, mapW, mapH;
 
-        var cursors;
-        var sprite;
-        var diamonds;
-
-        var scoreText;
-        var diamonds_collected;
+        var sprite, diamonds;
+        var scoreText, diamonds_collected;
 
         var player_speed;
 
@@ -99,6 +94,7 @@
                 sprite.body.velocity.y = player_speed;
             } 
 
+            game.physics.arcade.overlap(sprite, diamonds, collect_diamond, null, this);
             //console.log(map.getTile(layer.getTileX(sprite.x),layer.getTileY(sprite.y),layer, true).index)
             // if (cursors.left.isDown) {
             //     if (! check_collide_walls(sprite.x, sprite.y, -1, 0, layer, 'desert')) {
@@ -136,7 +132,6 @@
         function create_sprite() {
             sprite = game.add.sprite(450, 80, 'ufo');
             sprite.anchor.setTo(0.5, 0.5);
-            // game.physics.enable(sprite, Phaser.Physics.ARCADE);
             game.physics.arcade.enable(sprite);
             player_speed = 250;
 
