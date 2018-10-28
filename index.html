@@ -27,91 +27,142 @@
 
         var map;
         var layer;
+        var tileW;
+        var tileH;
 
         var cursors;
         var sprite;
+        var diamonds;
+
+        var scoreText;
+        var diamonds_collected;
+
+        var player_speed;
+
 
         function create() {
 
             map = game.add.tilemap('desert');
-
             map.addTilesetImage('Desert', 'tiles');
-
+            tileW = map.tileWidth;
+            tileH = map.tileHeight;
             layer = map.createLayer('Ground');
-
             layer.resizeWorld();
 
-            sprite = game.add.sprite(450, 80, 'ufo');
-            sprite.anchor.setTo(0.5, 0.5);
+            create_sprite()
+            generate_diamonds(12)
+            diamonds_collected = 0;
 
-            game.physics.enable(sprite, Phaser.Physics.ARCADE);
-
-            game.camera.follow(sprite);
-
-            cursors = game.input.keyboard.createCursorKeys();
+            scoreText = game.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
 
 
         }
 
-        function check_collide_walls(phase_x, phase_y, mv_x, mv_y, m_layer, map_name ){
-            if (map_name == 'desert'){
-                // this is the tile indices that indicate walls.
-                // we have to do this for every map we are going to use, 
-                // since each map has different walls.
-                // You can actually check the indices of the tiles by going into tilemaps/tiles/ 
-                // and click the tile image you used. Then, the grid starts from 1 from the upper
-                // left corner. it inclements by 1 as you go right. It ends at the lower right corner.
-                //You can then count which block belongs to what number. 
+        // function check_collide_walls(phase_x, phase_y, mv_x, mv_y, m_layer, map_name ){
+        //     if (map_name == 'desert'){
+        //         // this is the tile indices that indicate walls.
+        //         // we have to do this for every map we are going to use, 
+        //         // since each map has different walls.
+        //         // You can actually check the indices of the tiles by going into tilemaps/tiles/ 
+        //         // and click the tile image you used. Then, the grid starts from 1 from the upper
+        //         // left corner. it inclements by 1 as you go right. It ends at the lower right corner.
+        //         //You can then count which block belongs to what number. 
 
-                // There is a minor bug, 
-                multFactor = 5
-                const wall_indx_set = new Set([1, 2, 3, 9, 10, 11, 17, 18, 19, 20, 21, 28, 29, -1]);
-                mv_tile = map.getTile(layer.getTileX(phase_x  + mv_x * multFactor ),
-                   layer.getTileY(phase_y + mv_y * multFactor),  m_layer, true) // get the index of the tile.
-                tile_indx = ((mv_tile != null) && (mv_tile.x != 0) && (mv_tile.y != 0) ) ? mv_tile.index : -1
+        //         // There is a minor bug, 
+        //         multFactor = 5
+        //         const wall_indx_set = new Set([1, 2, 3, 9, 10, 11, 17, 18, 19, 20, 21, 28, 29, -1]);
+        //         mv_tile = map.getTile(layer.getTileX(phase_x  + mv_x * multFactor ),
+        //            layer.getTileY(phase_y + mv_y * multFactor),  m_layer, true) // get the index of the tile.
+        //         tile_indx = ((mv_tile != null) && (mv_tile.x != 0) && (mv_tile.y != 0) ) ? mv_tile.index : -1
 
-                //return true
-                return wall_indx_set.has(tile_indx) // if has, it collides. Else, it does not. 
+        //         //return true
+        //         return wall_indx_set.has(tile_indx) // if has, it collides. Else, it does not. 
 
-            } else {
-                return false // does not collide. We have to update this 
-            }
-        }
+        //     } else {
+        //         return false // does not collide. We have to update this 
+        //     }
+        // }
+
         function update() {
             //game.physics.arcade.collide(sprite, layer);
             sprite.body.velocity.x = 0;
             sprite.body.velocity.y = 0;
-            sprite.body.angularVelocity = 0;
-            constant_speed = 150;
-            //console.log(map.getTile(layer.getTileX(sprite.x),layer.getTileY(sprite.y),layer, true).index)
+            // sprite.body.angularVelocity = 0;
             if (cursors.left.isDown) {
-                if (! check_collide_walls(sprite.x, sprite.y, -1, 0, layer, 'desert')) {
-                    sprite.body.velocity.x = -constant_speed;
-                }            
-            }
-            else if (cursors.right.isDown) {
-                if (! check_collide_walls(sprite.x, sprite.y, 1, 0, layer, 'desert')) {
-                    sprite.body.velocity.x = constant_speed;
-                }                 
-            }
-            else if (cursors.up.isDown) {
-                if (! check_collide_walls(sprite.x, sprite.y, 0, -1, layer, 'desert')) {
-                    sprite.body.velocity.y = -constant_speed;
-                }                 
-            }
-            else if (cursors.down.isDown) {
-                if (! check_collide_walls(sprite.x, sprite.y, 0, 1, layer, 'desert')) {
-                    sprite.body.velocity.y = constant_speed;
-                }                 
-            }
+                sprite.body.velocity.x = -player_speed;
+            } else if (cusrors.right.isDown) {
+                sprite.body.velocity.x = player_speed;
+            } else if (cusrors.up.isDown) { 
+                sprite.body.velocity.y = player_speed;
+            } else if (cusrors.down.isDown) {
+                sprite.body.velocity.y = -player_speed;
+            } 
+
+            //console.log(map.getTile(layer.getTileX(sprite.x),layer.getTileY(sprite.y),layer, true).index)
+            // if (cursors.left.isDown) {
+            //     if (! check_collide_walls(sprite.x, sprite.y, -1, 0, layer, 'desert')) {
+            //         sprite.body.velocity.x = -constant_speed;
+            //     }            
+            // }
+            // else if (cursors.right.isDown) {
+            //     if (! check_collide_walls(sprite.x, sprite.y, 1, 0, layer, 'desert')) {
+            //         sprite.body.velocity.x = constant_speed;
+            //     }                 
+            // }
+            // else if (cursors.up.isDown) {
+            //     if (! check_collide_walls(sprite.x, sprite.y, 0, -1, layer, 'desert')) {
+            //         sprite.body.velocity.y = -constant_speed;
+            //     }                 
+            // }
+            // else if (cursors.down.isDown) {
+            //     if (! check_collide_walls(sprite.x, sprite.y, 0, 1, layer, 'desert')) {
+            //         sprite.body.velocity.y = constant_speed;
+                // }                 
+            // }
+
+
 
         }
 
         function render() {
-
+            game.debug.text('Collect All the Diamonds!', 32, 32, 'rgb(0,0,0)');
             game.debug.text('Tile X: ' + layer.getTileX(sprite.x), 32, 48, 'rgb(0,0,0)');
             game.debug.text('Tile Y: ' + layer.getTileY(sprite.y), 32, 64, 'rgb(0,0,0)');
 
+        }
+
+
+        function create_sprite() {
+            sprite = game.add.sprite(450, 80, 'ufo');
+            sprite.anchor.setTo(0.5, 0.5);
+            // game.physics.enable(sprite, Phaser.Physics.ARCADE);
+            game.physics.arcade.enable(sprite);
+            player_speed = 250;
+
+            game.camera.follow(sprite);
+            cursors = game.input.keyboard.createCursorKeys();
+            sprite.body.collideWorldBounds = true;
+
+        }
+
+
+        function generate_diamonds(tot_diamonds) {
+            // create stars
+            diamonds = game.add.group();
+            diamonds.enableBody = true;
+            for (var i = 0; i < tot_diamonds; i++) {
+                var diamond = diamonds.create(i * tileW , i * tileH, 'diamond');
+                // star.body.gravity.y = 60;
+                // star.body.bounce.y = 0.7 + Math.random() * 0.2;
+            }
+        }
+
+
+        function collect_diamond (player, diamond) {
+            diamond.kill();
+            diamonds_collected += 1;
+            score = diamonds_collected * 10;
+            scoreText.text = 'Score: ' + score;
         }
     </script>
 </body>
