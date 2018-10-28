@@ -22,6 +22,7 @@
             game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
             game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
             game.load.image('ufo', 'assets/sprites/ufo.png');
+            game.load.image('diamond', 'assets/sprites/diamond.png');
 
         }
 
@@ -90,12 +91,12 @@
             // sprite.body.angularVelocity = 0;
             if (cursors.left.isDown) {
                 sprite.body.velocity.x = -player_speed;
-            } else if (cusrors.right.isDown) {
+            } else if (cursors.right.isDown) {
                 sprite.body.velocity.x = player_speed;
-            } else if (cusrors.up.isDown) { 
-                sprite.body.velocity.y = player_speed;
-            } else if (cusrors.down.isDown) {
+            } else if (cursors.up.isDown) { 
                 sprite.body.velocity.y = -player_speed;
+            } else if (cursors.down.isDown) {
+                sprite.body.velocity.y = player_speed;
             } 
 
             //console.log(map.getTile(layer.getTileX(sprite.x),layer.getTileY(sprite.y),layer, true).index)
