@@ -1,4 +1,4 @@
-var loadState = {
+var welcomeState = {
 
 	preload: function() {
 		this.loadingLabel = game.add.text(160, 300, 'loading...',
