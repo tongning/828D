@@ -2,146 +2,20 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Phaser - Making your first game, part 1</title>
+    <title>Testies, one two.</title>
+    <style type="text/css"> body {margin: 0;} </style>
+    
     <script src="phaser.min.js"></script>
-    <style type="text/css">
-        body {
-            margin: 0;
-        }
-    </style>
-
+    <script type="text/javascript" src="js/boot.js"></script>
+    <script type="text/javascript" src="js/load.js"></script>
+    <script type="text/javascript" src="js/menu.js"></script>
+    <script type="text/javascript" src="js/play.js"></script>
+    <script type="text/javascript" src="js/win.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
 </head>
 
 <body>
-    <script>
-
-        var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', { preload: preload, create: create, update: update, render: render });
-
-        function preload() {
-            game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
-            game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
-            game.load.image('ufo', 'assets/sprites/ufo.png');
-            game.load.image('diamond', 'assets/sprites/diamond.png');
-
-        }
-
-
-        var map, layer, cursors;
-        var layer;
-
-        var sprite, diamonds;
-        var scoreText, diamondsCollected, score;
-
-        var playerSpeed;
-
-
-        function create() {
-            map = game.add.tilemap('desert');
-            map.addTilesetImage('Desert', 'tiles');
-            layer = map.createLayer('Ground');
-            layer.resizeWorld();
-
-            create_sprite()
-            generate_diamonds(12)
-            diamonds_collected = 0;
-            score = 0;
-            scoreText = 'Score: ' + score;
-
-
-            // scoreText = game.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
-
-
-        }
-
-        // function check_collide_walls(phase_x, phase_y, mv_x, mv_y, m_layer, map_name ){
-        //     if (map_name == 'desert'){
-        //         // this is the tile indices that indicate walls.
-        //         // we have to do this for every map we are going to use, 
-        //         // since each map has different walls.
-        //         // You can actually check the indices of the tiles by going into tilemaps/tiles/ 
-        //         // and click the tile image you used. Then, the grid starts from 1 from the upper
-        //         // left corner. it inclements by 1 as you go right. It ends at the lower right corner.
-        //         //You can then count which block belongs to what number. 
-
-        //         // There is a minor bug, 
-        //         multFactor = 5
-        //         const wall_indx_set = new Set([1, 2, 3, 9, 10, 11, 17, 18, 19, 20, 21, 28, 29, -1]);
-        //         mv_tile = map.getTile(layer.getTileX(phase_x  + mv_x * multFactor ),
-        //            layer.getTileY(phase_y + mv_y * multFactor),  m_layer, true) // get the index of the tile.
-        //         tile_indx = ((mv_tile != null) && (mv_tile.x != 0) && (mv_tile.y != 0) ) ? mv_tile.index : -1
-
-        //         //return true
-        //         return wall_indx_set.has(tile_indx) // if has, it collides. Else, it does not. 
-
-        //     } else {
-        //         return false // does not collide. We have to update this 
-        //     }
-        // }
-
-
-        function update() {
-            //game.physics.arcade.collide(sprite, layer);
-            sprite.body.velocity.x = 0;
-            sprite.body.velocity.y = 0;
-            // sprite.body.angularVelocity = 0;
-            if (cursors.left.isDown) {
-                sprite.body.velocity.x = -playerSpeed;
-            } else if (cursors.right.isDown) {
-                sprite.body.velocity.x = playerSpeed;
-            } else if (cursors.up.isDown) { 
-                sprite.body.velocity.y = -playerSpeed;
-            } else if (cursors.down.isDown) {
-                sprite.body.velocity.y = playerSpeed;
-            } 
-
-            game.physics.arcade.overlap(sprite, diamonds, collect_diamond, null, this);
-
-            //console.log(map.getTile(layer.getTileX(sprite.x),layer.getTileY(sprite.y),layer, true).index)
-        }
-
-
-        function render() {
-            game.debug.text('Collect All the Diamonds!', 32, 32, 'rgb(0,0,0)');
-            game.debug.text('Tile X: ' + layer.getTileX(sprite.x), 32, 48, 'rgb(0,0,0)');
-            game.debug.text('Tile Y: ' + layer.getTileY(sprite.y), 32, 64, 'rgb(0,0,0)');
-            game.debug.text(scoreText, 32, 90, 'rgb(0,0,0)');
-        }
-
-
-        function create_sprite() {
-            sprite = game.add.sprite(450, 80, 'ufo');
-            sprite.anchor.setTo(0.5, 0.5);
-            game.physics.arcade.enable(sprite);
-            playerSpeed = 250;
-
-            game.camera.follow(sprite);
-            cursors = game.input.keyboard.createCursorKeys();
-            sprite.body.collideWorldBounds = true;
-
-        }
-
-
-        function generate_diamonds(tot_diamonds) {
-            // create stars
-            diamonds = game.add.group();
-            diamonds.enableBody = true;
-            for (var i = 0; i < tot_diamonds; i++) {
-                locX = map.tileWidth * map.width * Math.random();
-                locY = map.tileHeight * map.height * Math.random();
-                var diamond = diamonds.create(locX , locY, 'diamond');
-                // star.body.gravity.y = 60;
-                // star.body.bounce.y = 0.7 + Math.random() * 0.2;
-            }
-        }
-
-
-        function collect_diamond (player, diamond) {
-            diamond.kill();
-            diamondsCollected += 1;
-            score += 10;
-            scoreText = 'Score: ' + score;
-        }
-    </script>
+    <div id="gameDiv"> </div>
 </body>
 
 </html>
