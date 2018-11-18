@@ -3,14 +3,20 @@ var welcomeState = {
 	preload: function() {
 		this.loadingLabel = game.add.text(160, 300, 'loading...',
 			{font: '30px Courier', fill: '#ffffff'});
-
+		this.loadScripts();
+		this.loadFonts();
 		/* 
 		=== include any commonly reused sprites below ===
 			game.load.image('player', 'assets/player.png');
 			game.load.image('win', 'assets/win.png');
 		*/
+		game.load.spritesheet('talking-head', 'assets/sprites/talking-head.png', 255, 330);
 	},
 
+	loadScripts: function () {
+		game.load.script('style', 'js/lib/style.js');
+		game.load.script('WebFont', 'js/lib/webfontloader.js');
+	},
 
 	create: function() {
 		var nameLabel = game.add.text(80, 80, 'PI Simulator',
@@ -32,6 +38,14 @@ var welcomeState = {
 		game.state.start('menu');
 	},
 
+	loadFonts: function () {
+		WebFontConfig = {
+		  custom: {
+			families: ['TheMinion'],
+			urls: ['assets/style/theminion.css']
+		  }
+		}
+	},
 
 	sleep: function(time) {
   		return new Promise((resolve) => setTimeout(resolve, time));
