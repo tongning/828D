@@ -16,6 +16,7 @@ var welcomeState = {
 	loadScripts: function () {
 		game.load.script('style', 'js/lib/style.js');
 		game.load.script('WebFont', 'js/lib/webfontloader.js');
+		game.load.script('HealthBar', 'js/lib/HealthBar.standalone.js');
 	},
 
 	create: function() {
@@ -41,8 +42,8 @@ var welcomeState = {
 	loadFonts: function () {
 		WebFontConfig = {
 		  custom: {
-			families: ['TheMinion'],
-			urls: ['assets/style/theminion.css']
+			families: ['TheMinion', 'BigSnow', 'Blacksword'],
+			urls: ['assets/style/theminion.css', 'assets/style/bigsnow.css', 'assets/style/blacksword.css']
 		  }
 		}
 	},

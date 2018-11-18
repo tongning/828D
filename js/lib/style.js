@@ -28,6 +28,18 @@ var style;
         fill: highlightColor,
         stroke: 'rgba(200,200,200,0.5)'
       }
+    },
+    basiclabel: {
+        default: {
+            font: '20pt BigSnow',
+            fill: defaultColor
+        }
+    },
+    quote: {
+        default: {
+            font: '20pt Blacksword',
+            fill: defaultColor
+        }
     }
   };
 
