@@ -5,22 +5,96 @@ var playState = {
         game.load.image('ufo', 'assets/sprites/ufo.png');
         game.load.image('diamond', 'assets/sprites/diamond.png');
 
+        game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png');// our supervisor
+
+
     },
 
 	create: function() {
+        this.phase = 0; // dialogue var
+
         this.map = game.add.tilemap('desert');
         this.map.addTilesetImage('Desert', 'tiles');
         layer = this.map.createLayer('Ground');
         layer.resizeWorld();
 
         this.createPlayer()
-        this.generateDiamonds(12)
+        //
 
         this.score = 0;
         this.scoreText = 'Score: ' + this.score;
 
+        this.diamonds = game.add.group(); // now all diamonds share attributes
+        this.diamonds.enableBody = true; // extension of the above
+
+        this.npcs = game.add.group(); // add MPCs
+        this.npcs.enableBody = true; 
+        sup = this.npcs.create(400, 400, 'supervisor'); // our first supervisor! 
+
         this.initializePopupState();
+
+        this.generateDiamonds(12)
+
+
+        this.texts = [];
+        dials1 = ["yo I am your supervisor", "go get some diamonds", "hurry up. get 10 of them"];
+
+        dials2 = ["good job", "good job"];
+
+        this.dials = [dials1, dials2];
+
     },
+    processDialogue: function(){
+        this.closePopupWindow();
+
+        this.popupState.popupText.visible = false;
+        newTxt = this.texts.shift();
+        newTxt = newTxt == undefined ? null: newTxt +  "\nspace -- next dialogue\nesc -- skip dialogue";
+
+
+        this.popupState.popupText = game.add.text(game.camera.width / 2, game.camera.height / 2, newTxt,this.popupState.style);
+
+        this.openPopupWindow();
+    },
+
+    progDialogue: function (player, diamond){
+        if (this.phase == 0) {
+            this.texts = this.dials.shift();  // NEED TO FIX; change to load dialogue
+            this.phase = this.phase + 1;
+
+        }
+        if (this.phase == 1) {
+            game.paused = true;
+            this.processDialogue();
+        
+            if (this.texts.length == 0) {
+                game.paused = false;
+                this.generateDiamonds(20);
+                this.phase = this.phase + 1;
+                this.texts = this.dials.shift(); // NEED TO FIX
+            }
+        }
+
+        if (this.phase == 2) {
+            this.closePopupWindow();
+            if(this.score >= 50){
+                game.paused = true;
+                this.processDialogue();
+
+                if(this.texts.length == 0){
+                    game.paused = false;
+                    this.phase = this.phase + 1;
+
+                }
+            }
+        }
+
+        if(this.phase == 3){
+            this.closePopupWindow();
+        }
+
+    },
+
 
     initializePopupState: function() {
         this.popupState = 
@@ -29,7 +103,9 @@ var playState = {
             popup: null,
             popupText: null,
             isPopupOpen: false,
-            closePopupKey: null
+            closePopupKey: null,
+            style: null,
+            spsp: null
         }
         
         this.popupState.popup = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'background');
@@ -41,10 +117,14 @@ var playState = {
         popup.scale.set(0.0);
         this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
         this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
-        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
         this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE DIAMOND\nSize: 2mm\nPress ESC to continue", style);
         this.popupState.popupText.anchor.set(0.5);
         this.popupState.popupText.visible = false;
+
+
+        this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.popupState.spsp.onDown.add(this.progDialogue, this);
     },
 
     update: function() {
@@ -66,6 +146,8 @@ var playState = {
         }
 
         game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
+        game.physics.arcade.overlap(this.player, this.npcs, this.progDialogue, null, this);
+        //game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
     },
 
     openPopupWindow: function () {
@@ -120,8 +202,8 @@ var playState = {
 
     generateDiamonds: function(totDiamonds) {
         // create stars
-        this.diamonds = game.add.group();
-        this.diamonds.enableBody = true;
+        //this.diamonds = game.add.group();
+        //this.diamonds.enableBody = true;
         for (var i = 0; i < totDiamonds; i++) {
             locX = this.map.tileWidth * this.map.width * Math.random();
             locY = this.map.tileHeight * this.map.height * Math.random();
@@ -136,6 +218,11 @@ var playState = {
         diamond.kill();
         this.score += 10;
         this.scoreText = 'Score: ' + this.score;
-        this.openPopupWindow();
+        //this.openPopupWindow();
     },
+
+
+
+
+    
 };
