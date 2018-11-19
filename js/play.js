@@ -150,8 +150,15 @@ var playState = {
         //game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
     },
 
-    openPopupWindow: function () {
-       
+    generatePopupText: function(dataValue) {
+        return "You found a\nBLUE DIAMOND\nSize: "+dataValue+"mm\nPress ESC to continue"
+    },
+
+    generateDataValueFromDistr: function() {
+        return Math.random();
+    },
+
+    openPopupWindow: function (newPopupTextString) {
             var popupState = this.popupState;
             if ((popupState.tween !== null && popupState.tween.isRunning) 
             || popupState.popup.scale.x === 1) {
@@ -159,8 +166,13 @@ var playState = {
             }
             popupState.popup.position.x = game.camera.x + (game.width / 2);
             popupState.popup.position.y = game.camera.y + (game.height / 2);
+
+            var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+            popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
             popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
             popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
+            popupState.popupText.anchor.set(0.5)
+            
             popupState.popupText.visible = true;
             //  Create a tween that will pop-open the window, but only if it's not already tweening or open
             popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
@@ -213,12 +225,11 @@ var playState = {
         }
     },
 
-
     collectDiamond: function (player, diamond) {
         diamond.kill();
         this.score += 10;
         this.scoreText = 'Score: ' + this.score;
-        //this.openPopupWindow();
+        this.openPopupWindow(this.generatePopupText(this.generateDataValueFromDistr()));
     },
 
 
