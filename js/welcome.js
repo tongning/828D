@@ -11,6 +11,7 @@ var welcomeState = {
 			game.load.image('win', 'assets/win.png');
 		*/
 		game.load.spritesheet('talking-head', 'assets/sprites/talking-head.png', 255, 330);
+		game.load.image('background', 'assets/images/empty_background.jpg');
 	},
 
 	loadScripts: function () {
