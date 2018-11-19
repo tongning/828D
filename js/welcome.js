@@ -18,6 +18,7 @@ var welcomeState = {
 		game.load.script('style', 'js/lib/style.js');
 		game.load.script('WebFont', 'js/lib/webfontloader.js');
 		game.load.script('HealthBar', 'js/lib/HealthBar.standalone.js');
+		game.load.script('jstat', 'js/lib/jstat.min.js');
 	},
 
 	create: function() {

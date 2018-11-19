@@ -155,7 +155,11 @@ var playState = {
     },
 
     generateDataValueFromDistr: function() {
-        return Math.random();
+        return this.round(jStat.normal.sample(10,2),2);
+    },
+
+    round: function (value, decimals) {
+        return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
     },
 
     openPopupWindow: function (newPopupTextString) {
