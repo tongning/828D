@@ -32,6 +32,7 @@ var playState = {
         sup = this.npcs.create(400, 400, 'supervisor'); // our first supervisor! 
 
         this.initializePopupState();
+        this.initializedialogueState();
 
         this.generateDiamonds(12)
 
@@ -44,17 +45,88 @@ var playState = {
         this.dials = [dials1, dials2];
 
     },
-    processDialogue: function(){
-        this.closePopupWindow();
 
-        this.popupState.popupText.visible = false;
+
+
+    initializedialogueState: function() {
+        this.dialogueState = 
+        {
+            tween: null,
+            popup: null,
+            popupText: null,
+            isPopupOpen: false,
+            //closePopupKey: null,
+            style: null,
+            spsp: null
+        }
+        
+        this.dialogueState.popup = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'background');
+        var popup = this.dialogueState.popup;
+        popup.alpha = 0.8;
+        popup.anchor.set(0.5);
+        popup.inputEnabled = true;
+        popup.input.enableDrag();
+        popup.scale.set(0.0);
+        //this.dialogueState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        //this.dialogueState.closePopupKey.onDown.add(this.closePopupDialogue, this);
+        this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        this.dialogueState.popupText = game.add.text(0, 0, "DEFAULT", style);
+        this.dialogueState.popupText.anchor.set(0.5);
+        this.dialogueState.popupText.visible = false;
+
+
+        this.dialogueState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.dialogueState.spsp.onDown.add(this.progDialogue, this);
+    },
+
+        openPopupDialogue: function (newPopupTextString) {
+            var dialogueState = this.dialogueState;
+            if ((dialogueState.tween !== null && dialogueState.tween.isRunning) 
+            || dialogueState.popup.scale.x === 1) {
+                return;
+            }
+            dialogueState.popup.position.x = game.camera.x + (game.width / 2);
+            dialogueState.popup.position.y = game.camera.y + (game.height / 2);
+
+            var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+            dialogueState.popupText = game.add.text(0, 0, newPopupTextString, style);
+            dialogueState.popupText.x = Math.floor(dialogueState.popup.x + dialogueState.popup.width / 2);
+            dialogueState.popupText.y = Math.floor(dialogueState.popup.y + dialogueState.popup.height / 2);
+            dialogueState.popupText.anchor.set(0.5)
+            
+            dialogueState.popupText.visible = true;
+            //  Create a tween that will pop-open the Dialogue, but only if it's not already tweening or open
+            dialogueState.tween = game.add.tween(dialogueState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
+            dialogueState.isPopupOpen = true;
+        
+    },
+
+    closePopupDialogue: function() {
+        var dialogueState = this.dialogueState;
+        if (dialogueState.tween && dialogueState.tween.isRunning || dialogueState.popup.scale.x === 0.1) {
+            return;
+        }
+        dialogueState.popupText.visible = false;
+        //  Create a tween that will close the Dialogue, but only if it's not already tweening or closed
+        dialogueState.tween = game.add.tween(dialogueState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
+        dialogueState.isPopupOpen = false;
+    },
+
+
+
+
+
+    processDialogue: function(){
+        this.closePopupDialogue();
+
+        this.dialogueState.popupText.visible = false;
         newTxt = this.texts.shift();
         newTxt = newTxt == undefined ? null: newTxt +  "\nspace -- next dialogue\nesc -- skip dialogue";
 
 
-        this.popupState.popupText = game.add.text(game.camera.width / 2, game.camera.height / 2, newTxt,this.popupState.style);
+        this.dialogueState.popupText = game.add.text(game.camera.width / 2, game.camera.height / 2, newTxt,this.dialogueState.style);
 
-        this.openPopupWindow();
+        this.openPopupDialogue();
     },
 
     progDialogue: function (player, diamond){
@@ -76,7 +148,7 @@ var playState = {
         }
 
         if (this.phase == 2) {
-            this.closePopupWindow();
+            this.closePopupDialogue();
             if(this.score >= 50){
                 game.paused = true;
                 this.processDialogue();
@@ -90,7 +162,7 @@ var playState = {
         }
 
         if(this.phase == 3){
-            this.closePopupWindow();
+            this.closePopupDialogue();
         }
 
     },
@@ -126,6 +198,9 @@ var playState = {
         this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.popupState.spsp.onDown.add(this.progDialogue, this);
     },
+
+
+
 
     update: function() {
         //game.physics.arcade.collide(player, layer);
@@ -194,6 +269,8 @@ var playState = {
         popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
         popupState.isPopupOpen = false;
     },
+
+
 
     render: function() {
         game.debug.text('Collect All the Diamonds!', 32, 32, 'rgb(0,0,0)');
