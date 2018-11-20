@@ -1,14 +1,21 @@
 var playState = {
+    init: function( population ) {
+        this.sampleSprite = population.sprite;
+        this.mean = population.mean;
+        this.stdv = population.stdv;
+        this.processCost = population.processCost;
+        this.prodPeriod = population.prodPeriod;
+    },
+
+
     preload: function() {
         game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
         game.load.image('ufo', 'assets/sprites/ufo.png');
-        game.load.image('diamond', 'assets/sprites/diamond.png');
-
+        game.load.image('diamond', this.sampleSprite);
         game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png');// our supervisor
-
-
     },
+
 
 	create: function() {
         this.phase = 0; // dialogue var
@@ -46,6 +53,29 @@ var playState = {
 
     },
 
+
+    update: function() {
+        //game.physics.arcade.collide(player, layer);
+        // this.player.body.angularVelocity = 0;
+        this.player.body.velocity.x = 0;
+        this.player.body.velocity.y = 0;
+        
+        if (!this.popupState.isPopupOpen) {
+            if (this.cursors.left.isDown) {
+                this.player.body.velocity.x = -this.playerSpeed;
+            } else if (this.cursors.right.isDown) {
+                this.player.body.velocity.x = this.playerSpeed;
+            } else if (this.cursors.up.isDown) {
+                this.player.body.velocity.y = -this.playerSpeed;
+            } else if (this.cursors.down.isDown) {
+                this.player.body.velocity.y = this.playerSpeed;
+            }
+        }
+
+        game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
+        game.physics.arcade.overlap(this.player, this.npcs, this.progDialogue, null, this);
+        //game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
+    },
 
 
     initializedialogueState: function() {
@@ -200,37 +230,12 @@ var playState = {
     },
 
 
-
-
-    update: function() {
-        //game.physics.arcade.collide(player, layer);
-        // this.player.body.angularVelocity = 0;
-        this.player.body.velocity.x = 0;
-        this.player.body.velocity.y = 0;
-        
-        if (!this.popupState.isPopupOpen) {
-            if (this.cursors.left.isDown) {
-                this.player.body.velocity.x = -this.playerSpeed;
-            } else if (this.cursors.right.isDown) {
-                this.player.body.velocity.x = this.playerSpeed;
-            } else if (this.cursors.up.isDown) {
-                this.player.body.velocity.y = -this.playerSpeed;
-            } else if (this.cursors.down.isDown) {
-                this.player.body.velocity.y = this.playerSpeed;
-            }
-        }
-
-        game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
-        game.physics.arcade.overlap(this.player, this.npcs, this.progDialogue, null, this);
-        //game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
-    },
-
     generatePopupText: function(dataValue) {
         return "You found a\nBLUE DIAMOND\nSize: "+dataValue+"mm\nPress ESC to continue"
     },
 
     generateDataValueFromDistr: function() {
-        return this.round(jStat.normal.sample(10,2),2);
+        return this.round(jStat.normal.sample(this.mean,this.stdv),2);
     },
 
     round: function (value, decimals) {

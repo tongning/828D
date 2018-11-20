@@ -29,7 +29,7 @@ var welcomeState = {
 			{font: '25px Arial', fill: '#ffffff'});
 
 
-		this.sleep(2000).then(() => {
+		this.sleep(1000).then(() => {
 			this.loadingLabel.setText("Loaded!")
 			var wkey = game.input.keyboard.addKey(Phaser.Keyboard.W);
 			wkey.onDown.addOnce(this.start, this);

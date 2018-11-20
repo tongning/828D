@@ -1,5 +1,13 @@
 // This game menu is adapted from https://github.com/MattMcFarland/phaser-menu-system.
 var menuState = {
+	init: function() {
+		this.optionCount = 1;
+	},
+
+	preload: function() {
+		this.loadImages();
+		this.projects = this.generateProjects(3);
+	},
 
 	create: function() {
 		var backgroundImage = game.add.sprite(0, 0, 'menu-bg');
@@ -12,12 +20,13 @@ var menuState = {
 		this.addHealthBar(150, 500, "Reputation", 75);
 		this.addHealthBar(450, 500, "Funding", 75);
 		this.addQuote(150, 550);
+
 	},
 
 	addQuote: function(quoteX, quoteY) {
 		var quoteText = game.add.text(
-			quoteX, 
-			quoteY, 
+			quoteX,
+			quoteY,
 			"\"Keep it up! Collect high quality data to improve\nour reputation.\"", 
 			style.quote.default);
 	},
@@ -31,23 +40,65 @@ var menuState = {
 	},
 
 	addMenuOptions: function() {
-		this.addMenuOption('Diamond Mine', 
-		"Find the average weight of diamonds in the mine!\nDifficulty: Easy\nImpact: High",
-		function () {
-			game.state.start('play');
+		var p1 = projects[0];
+		var p2 = projects[1];
+		var p3 = projects[2];
+		var population1 = p1.population;
+		var population2 = p2.population;
+		var population3 = p3.population;
+		
+		this.addMenuOption(p1.name, p1.description + "\nFunding: " 
+			+ p1.fundingAward + "\nRecommended Reputation: " + p1.recommendedRep,
+			function () {
+				game.state.start('play', false, false, population1);
 		});
 
-		this.addMenuOption('Tropics', 
-		"Find the average wingspan of birds in the forest!\nDifficulty: Hard\nImpact: Medium",
-		function () {
-			game.state.start('play');
+		this.addMenuOption(p2.name, p2.description + "\nFunding: " 
+			+ p2.fundingAward + "\nRecommended Reputation: " + p2.recommendedRep,
+			function () {
+				game.state.start('play', false, false, population2);
 		});
 
-		this.addMenuOption('The Arctic', 
-		"Find the average thickness of the arctic ice sheets.\nDifficulty: Medium\nImpact: Medium",
-		function () {
-			game.state.start('play');
+		this.addMenuOption(p3.name, p3.description + "\nFunding: " 
+			+ p3.fundingAward + "\nRecommended Reputation: " + p3.recommendedRep,
+			function () {
+				game.state.start('play', false, false, population3);
 		});
+
+
+
+		// var project, population;
+
+		// for (i=0; i<this.projects.length; i++) {
+		//  	project = this.projects[i];
+		//  	population = project.population;
+
+		//  	this.addMenuOption(project.name, project.description 
+		//  			+ "\nFunding: " + project.fundingAward 
+		//  			+ "\nRecommended Reputation: " + project.recommendedRep,
+		// 		function () {
+		// 			game.state.start('play', false, false, population);
+		// 	});
+		// }
+
+		// this.addMenuOption(p1.name, 
+		// 	"Find the average weight of diamonds in the mine! \nFunding: " + p1.fundingAward
+		// 		+ "\nRecommended Reputation: " + p1.recommendedRep,
+		// 	function () {
+		// 		game.state.start('play', false, false, population);
+		// });
+
+		// this.addMenuOption('Tropics', 
+		// 	"Find the average wingspan of birds in the forest!\nDifficulty: Hard\nImpact: Medium",
+		// 	function () {
+		// 		game.state.start('play', false, false, population);
+		// });
+
+		// this.addMenuOption('The Arctic', 
+		// 	"Find the average thickness of the arctic ice sheets.\nDifficulty: Medium\nImpact: Medium",
+		// 	function () {
+		// 		game.state.start('play', false, false, population);
+		// });
 	},
 
 	addHealthBar: function(barX, barY, barLabel, barPercent) {
@@ -83,10 +134,6 @@ var menuState = {
 		game.load.image('menu-bg', 'assets/images/menu-bg.jpg');
 	},
 
-	preload: function() {
-		this.loadImages();
-	},
-
 	addMenuOption: function(title, description, callback) {
 		var titleSubtitleVSpace = 50;
 		var menuOptionVSpace = 150;
@@ -106,7 +153,25 @@ var menuState = {
 		this.optionCount ++;
 	},
 
-	init: function() {
-		this.optionCount = 1;
-	}
+
+	generateProjects: function(numProjects) {
+		// Population( mean, stdv, prodPeriod, processCost, sprite )
+		var pop1 = new Population(100, 10, 10, 200, 'assets/sprites/diamond.png');
+		var pop2 = new Population(10, 1, 15, 200, 'assets/sprites/mushroom.png');
+		var pop3 = new Population(10, 1, 15, 200, 'assets/sprites/car.png');
+		
+		var desc1 = 'Find the average weight of diamonds in the mine!'
+		var desc2 = 'Find the average wingspan of birds in the forest!'
+		var desc3 = 'Find the average thickness of the arctic ice sheets.'
+
+		// Project( name, funding, population, recommendedRep )
+		var p1 =new Project('Diamond Mine', desc1, 10000, pop1, 20);
+		var p2 = new Project('Tropics', desc2, 20000, pop2, 60);
+		var p3 = new Project('Arctic', desc3, 50000, pop3, 100);
+
+
+		projects = [p1,p2,p3];
+		return projects;
+	},
+
 };
