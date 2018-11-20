@@ -95,6 +95,7 @@ var playState = {
     },
 
     onClickReturnButton: function() {
+        game.state.start('menu');
         console.log("Return button was clicked");
     },
 
