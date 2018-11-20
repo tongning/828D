@@ -17,11 +17,15 @@ var menuState = {
 		this.addTalkingHead();
 		this.addMenuTitle();
 		this.addMenuOptions();
-		this.addHealthBar(150, 500, "Reputation", 75);
-		this.addHealthBar(450, 500, "Funding", 75);
 		this.addQuote(150, 550);
+		
+		var repPercent = 100 * game.totalReputation / game.maxReputation;
+		this.addHealthBar(150, 500, "Reputation", repPercent);
+		var fundingPercent = 100 * game.totalFunding / game.maxFunding;
+		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
 	},
+
 
 	addQuote: function(quoteX, quoteY) {
 		var quoteText = game.add.text(
@@ -46,7 +50,7 @@ var menuState = {
 		var population1 = p1.population;
 		var population2 = p2.population;
 		var population3 = p3.population;
-		
+
 		this.addMenuOption(p1.name, p1.description + "\nFunding: " 
 			+ p1.fundingAward + "\nRecommended Reputation: " + p1.recommendedRep,
 			function () {
