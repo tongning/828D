@@ -57,7 +57,7 @@ var playState = {
         dials2 = ["Your current mean is: ", "The actual mean is: ", "As you can see there is a disparity in two values.", "In order to assess the mean of the data, you have to \ncollect a fair number of data to be confident of mean.", 
              "I want to assess the mean again. Collect more samples for me!", ""];
 
-        dials3 = ["Your current mean is: ", "The actual mean is: ", "You get points: ", "Now, I want to assess the uncertainty: "]
+        dials3 = ["Your current mean is: ", "The actual mean is: ", "Now, go back to the lab! ", ""]
 
         this.dials = [dials1, dials2, dials3];
 
@@ -225,7 +225,7 @@ var playState = {
                     game.paused = false;
                     this.phase = this.phase + 1;
                     this.texts =this.dials.shift();// NEED TO FIX
-
+                    this.sizeList = []
                 }
             }
         }
@@ -241,8 +241,14 @@ var playState = {
                 //tx1 = "asdsaasda";
                 tx1 = this.texts[1] + this.populationMean.toString();
                 this.texts[1] = tx1;
+
+                deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.sizeList) - this.populationMean)/this.populationStdv    )  )
+                game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
+                console.log("reputation gained: " +  deltaReputation)
+                //tx2 = this.texts[2] //+ deltaReputation.toString();
+
                 this.phase = this.phase + 1 
-                this.sizeList = []
+                
             }
             
         }
