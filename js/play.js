@@ -18,11 +18,11 @@ var playState = {
         layer = this.map.createLayer('Ground');
         layer.resizeWorld();
 
-        this.createPlayer()
+        this.createPlayer();
         //
 
-        this.score = 0;
-        this.scoreText = 'Score: ' + this.score;
+        //this.score = 0;
+        this.scoreText = 'Score: ' //+ this.score;
 
         this.diamonds = game.add.group(); // now all diamonds share attributes
         this.diamonds.enableBody = true; // extension of the above
@@ -33,16 +33,31 @@ var playState = {
 
         this.initializePopupState();
         this.initializedialogueState();
-        this.generateDiamonds(12);
+
+
+        //this.generateDiamonds(12)
+
+
+        // statistics
+        this.diamonds_mean = 10.0;
+        this.diamonds_std = 2.0;
+        this.sizeList = [];
+
+        //this.generateDiamonds(12);
         this.initializeReturnButton();
 
 
+
         this.texts = [];
-        dials1 = ["yo I am your supervisor", "go get some diamonds", "hurry up. get 10 of them"];
+        dials1 = ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of diamonds.", "Can you go collect some diamonds for me?", "Collect enough diamonds so that you can know your mean for sure!", ""];
 
-        dials2 = ["good job", "good job"];
+        dials2 = ["Your current mean is: ", "The actual mean is: ", "As you can see there is a disparity in two values.", "In order to assess the mean of the data, you have to \ncollect a fair number of data to be confident of mean.", 
+             "I want to assess the mean again. Collect more diamonds for me!", ""];
 
-        this.dials = [dials1, dials2];
+        dials3 = ["Your current mean is: ", "The actual mean is: ", "You get points: ", "Now, I want to assess the uncertainty: "]
+
+        this.dials = [dials1, dials2, dials3];
+
 
     },
 
@@ -128,10 +143,13 @@ var playState = {
 
         this.dialogueState.popupText.visible = false;
         newTxt = this.texts.shift();
-        newTxt = newTxt == undefined ? null: newTxt +  "\nspace -- next dialogue\nesc -- skip dialogue";
+        newTxt = newTxt == undefined ? null: newTxt +  "\nspace -- next dialogue";
 
 
         this.dialogueState.popupText = game.add.text(game.camera.width / 2, game.camera.height / 2, newTxt,this.dialogueState.style);
+        this.dialogueState.popupText.x = Math.floor(this.dialogueState.popup.x + this.dialogueState.popup.width / 2);
+        this.dialogueState.popupText.y = Math.floor(this.dialogueState.popup.y + this.dialogueState.popup.height / 2);
+        this.dialogueState.popupText.anchor.set(0.5)
 
         this.openPopupDialogue();
     },
@@ -153,22 +171,72 @@ var playState = {
                 this.texts = this.dials.shift(); // NEED TO FIX
             }
         }
-
-        if (this.phase == 2) {
+        if (this.phase == 2){
             this.closePopupDialogue();
-            if(this.score >= 50){
+            if(this.sizeList.length >= 5){
+
+                // preprocess the dialogues
+                //tx0 = "asd";
+                tx0 = this.texts[0] + jStat.mean(this.sizeList).toString();
+                this.texts[0] = tx0;
+                //tx1 = "asdsaasda";
+                tx1 = this.texts[1] + this.diamonds_mean.toString();
+                this.texts[1] = tx1;
+                this.phase = this.phase + 1 
+            }
+            
+        }
+
+        if (this.phase == 3) {
+            this.closePopupDialogue();
+            if(this.sizeList.length >= 5){
+
                 game.paused = true;
                 this.processDialogue();
 
                 if(this.texts.length == 0){
                     game.paused = false;
                     this.phase = this.phase + 1;
+                    this.texts =this.dials.shift();// NEED TO FIX
 
                 }
             }
         }
 
-        if(this.phase == 3){
+        if (this.phase == 4){
+            this.closePopupDialogue();
+            if(this.sizeList.length >= 5){
+
+                // preprocess the dialogues
+                //tx0 = "asd";
+                tx0 = this.texts[0] + jStat.mean(this.sizeList).toString();
+                this.texts[0] = tx0;
+                //tx1 = "asdsaasda";
+                tx1 = this.texts[1] + this.diamonds_mean.toString();
+                this.texts[1] = tx1;
+                this.phase = this.phase + 1 
+                this.sizeList = []
+            }
+            
+        }
+
+        if (this.phase == 5) {
+            this.closePopupDialogue();
+            if(this.sizeList.length >= 5){
+
+                game.paused = true;
+                this.processDialogue();
+
+                if(this.texts.length == 0){
+                    game.paused = false;
+                    this.phase = this.phase + 1;
+                    this.texts =this.dials.shift();// NEED TO FIX
+
+                }
+            }
+        }
+
+        if (this.phase == 6){
             this.closePopupDialogue();
         }
 
@@ -210,8 +278,6 @@ var playState = {
 
 
     update: function() {
-        //game.physics.arcade.collide(player, layer);
-        // this.player.body.angularVelocity = 0;
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         
@@ -237,7 +303,7 @@ var playState = {
     },
 
     generateDataValueFromDistr: function() {
-        return this.round(jStat.normal.sample(10,2),2);
+        return this.round(jStat.normal.sample(this.diamonds_mean,this.diamonds_std),2);
     },
 
     round: function (value, decimals) {
@@ -281,8 +347,6 @@ var playState = {
 
     render: function() {
         game.debug.text('Collect All the Diamonds!', 32, 32, 'rgb(0,0,0)');
-        // game.debug.text('Tile X: ' + layer.getTileX(this.player.x), 32, 48, 'rgb(0,0,0)');
-        // game.debug.text('Tile Y: ' + layer.getTileY(this.player.y), 32, 64, 'rgb(0,0,0)');
         game.debug.text(this.scoreText, 32, 90, 'rgb(0,0,0)');
     },
 
@@ -301,23 +365,24 @@ var playState = {
 
 
     generateDiamonds: function(totDiamonds) {
-        // create stars
-        //this.diamonds = game.add.group();
-        //this.diamonds.enableBody = true;
+        // create diamonds.
         for (var i = 0; i < totDiamonds; i++) {
             locX = this.map.tileWidth * this.map.width * Math.random();
             locY = this.map.tileHeight * this.map.height * Math.random();
             var diamond = this.diamonds.create(locX , locY, 'diamond');
-            // .body.gravity.y = 60;
-            // .body.bounce.y = 0.7 + Math.random() * 0.2;
         }
     },
 
     collectDiamond: function (player, diamond) {
         diamond.kill();
-        this.score += 10;
-        this.scoreText = 'Score: ' + this.score;
-        this.openPopupWindow(this.generatePopupText(this.generateDataValueFromDistr()));
+        //this.score += 10;
+
+        diamondValue = this.generateDataValueFromDistr();
+
+        this.sizeList.push(diamondValue)
+        this.scoreText = 'Score: ' + this.sizeList.toString();
+        this.openPopupWindow(this.generatePopupText(diamondValue));
+        this.generateDiamonds(1); // replenishing diamonds. 
     },
 
 
