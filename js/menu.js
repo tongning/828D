@@ -40,7 +40,8 @@ var menuState = {
 			game.width - 500, 
 			100, 
 			"~Select a mission~", 
-			style.navitem.hover);
+			style.navitem.hover
+			);
 	},
 
 	addMenuOptions: function() {
@@ -159,14 +160,14 @@ var menuState = {
 
 
 	generateProjects: function(numProjects) {
-		// Population( mean, stdv, prodPeriod, processCost, sprite )
-		var pop1 = new Population(100, 10, 10, 200, 'assets/sprites/diamond.png');
-		var pop2 = new Population(10, 1, 15, 200, 'assets/sprites/mushroom.png');
-		var pop3 = new Population(10, 1, 15, 200, 'assets/sprites/car.png');
+		// Population( name, mean, stdv, prodPeriod, processCost, sprite )
+		var pop1 = new Population('diamond', 10, 1, 10, 200, 'assets/sprites/diamond.png');
+		var pop2 = new Population('mushroom', 100, 10, 15, 200, 'assets/sprites/mushroom.png');
+		var pop3 = new Population('car', 3000, 300, 15, 200, 'assets/sprites/car.png');
 		
 		var desc1 = 'Find the average weight of diamonds in the mine!'
 		var desc2 = 'Find the average wingspan of birds in the forest!'
-		var desc3 = 'Find the average thickness of the arctic ice sheets.'
+		var desc3 = 'Find the average thickness of the arctic ice sheets!'
 
 		// Project( name, funding, population, recommendedRep )
 		var p1 =new Project('Diamond Mine', desc1, 10000, pop1, 20);

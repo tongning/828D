@@ -1,4 +1,5 @@
-function Population( mean, stdv, prodPeriod, processCost, sprite ) {
+function Population( name, mean, stdv, prodPeriod, processCost, sprite ) {
+	this.name = name; 
 	this.mean = mean;
 	this.stdv = stdv; 
 	this.prodPeriod = prodPeriod; 		// the average expected time to generate a single sample on the map

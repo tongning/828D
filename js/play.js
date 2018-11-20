@@ -1,5 +1,6 @@
 var playState = {
     init: function( population ) {
+        this.sampleName = population.name;
         this.sampleSprite = population.sprite;
         this.populationMean = population.mean;
         this.populationStdv = population.stdv;
@@ -12,7 +13,7 @@ var playState = {
         game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
         game.load.image('ufo', 'assets/sprites/ufo.png');
-        game.load.image('diamond', this.sampleSprite);
+        game.load.image('sample', this.sampleSprite);
         game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png'); // our supervisor
     },
 
@@ -31,8 +32,8 @@ var playState = {
         //this.score = 0;
         this.scoreText = 'Score: ' //+ this.score;
 
-        this.diamonds = game.add.group(); // now all diamonds share attributes
-        this.diamonds.enableBody = true; // extension of the above
+        this.samples = game.add.group(); // now all samples share attributes
+        this.samples.enableBody = true; // extension of the above
 
         this.npcs = game.add.group(); // add MPCs
         this.npcs.enableBody = true; 
@@ -42,22 +43,19 @@ var playState = {
         this.initializedialogueState();
 
 
-        //this.generateDiamonds(12)
-
-
         // statistics
         this.sizeList = [];
 
-        //this.generateDiamonds(12);
+        //this.generateSamples(12);
         this.initializeReturnButton();
 
 
 
         this.texts = [];
-        dials1 = ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of diamonds.", "Can you go collect some diamonds for me?", "Collect enough diamonds so that you can know your mean for sure!", ""];
+        dials1 = ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of samples.", "Can you go collect some samples for me?", "Collect enough samples so that you can know your mean for sure!", ""];
 
         dials2 = ["Your current mean is: ", "The actual mean is: ", "As you can see there is a disparity in two values.", "In order to assess the mean of the data, you have to \ncollect a fair number of data to be confident of mean.", 
-             "I want to assess the mean again. Collect more diamonds for me!", ""];
+             "I want to assess the mean again. Collect more samples for me!", ""];
 
         dials3 = ["Your current mean is: ", "The actual mean is: ", "You get points: ", "Now, I want to assess the uncertainty: "]
 
@@ -89,9 +87,9 @@ var playState = {
             }
         }
 
-        game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
+        game.physics.arcade.overlap(this.player, this.samples, this.collectSample, null, this);
         game.physics.arcade.overlap(this.player, this.npcs, this.progDialogue, null, this);
-        //game.physics.arcade.overlap(this.player, this.diamonds, this.collectDiamond, null, this);
+        //game.physics.arcade.overlap(this.player, this.samples, this.collectsample, null, this);
     },
 
     onClickReturnButton: function() {
@@ -182,7 +180,7 @@ var playState = {
         this.openPopupDialogue();
     },
 
-    progDialogue: function (player, diamond){
+    progDialogue: function (player, sample){
         if (this.phase == 0) {
             this.texts = this.dials.shift();  // NEED TO FIX; change to load dialogue
             this.phase = this.phase + 1;
@@ -194,7 +192,7 @@ var playState = {
         
             if (this.texts.length == 0) {
                 game.paused = false;
-                this.generateDiamonds(20);
+                this.generateSamples(20);
                 this.phase = this.phase + 1;
                 this.texts = this.dials.shift(); // NEED TO FIX
             }
@@ -293,7 +291,7 @@ var playState = {
         this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
         this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
         this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-        this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE DIAMOND\nSize: 2mm\nPress ESC to continue", style);
+        this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE sample\nSize: 2mm\nPress ESC to continue", style);
         this.popupState.popupText.anchor.set(0.5);
         this.popupState.popupText.visible = false;
 
@@ -303,7 +301,7 @@ var playState = {
     },
 
     generatePopupText: function(dataValue) {
-        return "You found a\nBLUE DIAMOND\nSize: "+dataValue+"mm\nPress ESC to continue"
+        return "You found a\nBLUE " + this.sampleName + "\nSize: "+dataValue+"mm\nPress ESC to continue"
     },
 
     generateDataValueFromDistr: function() {
@@ -350,7 +348,7 @@ var playState = {
 
 
     render: function() {
-        game.debug.text('Collect All the Diamonds!', 32, 32, 'rgb(0,0,0)');
+        game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
         game.debug.text(this.scoreText, 32, 90, 'rgb(0,0,0)');
     },
 
@@ -368,25 +366,25 @@ var playState = {
     },
 
 
-    generateDiamonds: function(totDiamonds) {
-        // create diamonds.
-        for (var i = 0; i < totDiamonds; i++) {
+    generateSamples: function(totSamples) {
+        // create samples.
+        for (var i = 0; i < totSamples; i++) {
             locX = this.map.tileWidth * this.map.width * Math.random();
             locY = this.map.tileHeight * this.map.height * Math.random();
-            var diamond = this.diamonds.create(locX , locY, 'diamond');
+            var sample = this.samples.create(locX , locY, 'sample');
         }
     },
 
-    collectDiamond: function (player, diamond) {
-        diamond.kill();
+    collectSample: function (player, sample) {
+        sample.kill();
         //this.score += 10;
 
-        diamondValue = this.generateDataValueFromDistr();
+        sampleValue = this.generateDataValueFromDistr();
 
-        this.sizeList.push(diamondValue)
+        this.sizeList.push(sampleValue)
         this.scoreText = 'Score: ' + this.sizeList.toString();
-        this.openPopupWindow(this.generatePopupText(diamondValue));
-        this.generateDiamonds(1); // replenishing diamonds. 
+        this.openPopupWindow(this.generatePopupText(sampleValue));
+        this.generateSamples(1); // replenishing samples. 
     },
 
 
