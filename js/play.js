@@ -33,8 +33,8 @@ var playState = {
 
         this.initializePopupState();
         this.initializedialogueState();
-
-        this.generateDiamonds(12)
+        this.generateDiamonds(12);
+        this.initializeReturnButton();
 
 
         this.texts = [];
@@ -46,7 +46,14 @@ var playState = {
 
     },
 
+    initializeReturnButton: function() {
+        this.returnButton = game.add.button(20, game.height-100, 'button', this.onClickReturnButton, this, 0, 0, 0);
+        this.returnButton.fixedToCamera = true;
+    },
 
+    onClickReturnButton: function() {
+        console.log("Return button was clicked");
+    },
 
     initializedialogueState: function() {
         this.dialogueState = 
