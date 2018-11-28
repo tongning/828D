@@ -1,30 +1,12 @@
 var welcomeState = {
-
 	preload: function() {
 		this.loadingLabel = game.add.text(160, 300, 'loading...',
 			{font: '30px Courier', fill: '#ffffff'});
 		this.loadScripts();
 		this.loadFonts();
-		/* 
-		=== include any commonly reused sprites below ===
-			game.load.image('player', 'assets/player.png');
-			game.load.image('win', 'assets/win.png');
-		*/
-		game.load.spritesheet('talking-head', 'assets/sprites/talking-head.png', 255, 330);
-		game.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', 193, 71);
-		game.load.spritesheet('home-button', 'assets/buttons/home.png',0);
-		game.load.spritesheet('settings-cog', 'assets/buttons/settings.png',0);
-		game.load.image('background', 'assets/images/empty_background.jpg');
-		game.load.image('player', 'assets/sprites/ufo.png');
-		game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png');
+		this.loadSprites();
 	},
 
-	loadScripts: function () {
-		game.load.script('style', 'js/lib/style.js');
-		game.load.script('WebFont', 'js/lib/webfontloader.js');
-		game.load.script('HealthBar', 'js/lib/HealthBar.standalone.js');
-		game.load.script('jstat', 'js/lib/jstat.min.js');
-	},
 
 	create: function() {
 		var nameLabel = game.add.text(80, 80, 'PI Simulator',
@@ -42,11 +24,15 @@ var welcomeState = {
 	},
 
 
-	start: function() {
-		game.state.start('menu');
+	loadScripts: function() {
+		game.load.script('style', 'js/lib/style.js');
+		game.load.script('WebFont', 'js/lib/webfontloader.js');
+		game.load.script('HealthBar', 'js/lib/HealthBar.standalone.js');
+		game.load.script('jstat', 'js/lib/jstat.min.js');
 	},
 
-	loadFonts: function () {
+
+	loadFonts: function() {
 		WebFontConfig = {
 		  custom: {
 			families: ['TheMinion', 'BigSnow', 'Blacksword'],
@@ -55,8 +41,24 @@ var welcomeState = {
 		}
 	},
 
+
+	loadSprites: function() {
+		game.load.spritesheet('talking-head', 'assets/sprites/talking-head.png', 255, 330);
+		game.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', 193, 71);
+		game.load.spritesheet('home-button', 'assets/buttons/home.png',0);
+		game.load.spritesheet('settings-cog', 'assets/buttons/settings.png',0);
+		game.load.image('background', 'assets/images/empty_background.jpg');
+		game.load.image('player', 'assets/sprites/ufo.png');
+		game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png');
+	},
+
+
 	sleep: function(time) {
   		return new Promise((resolve) => setTimeout(resolve, time));
 	},
 
+
+	start: function() {
+		game.state.start('menu');
+	},
 };
