@@ -85,13 +85,10 @@ var playState = {
 
 
     render: function() {
-        // game.make.text(this.fundingText, )
+        /* need to change the depth of this menu bar*/
+        // game.debug.geom(this.menuBar,'#ffffff');
+
         // game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
-        // game.debug.text(this.scoreText, 32, 90, {
-        //     font: '64px Arial',
-        //     fill: '000000',
-        //     align: 'left',
-        // });
         
     },
 
@@ -103,6 +100,7 @@ var playState = {
 
 
     initMenu: function() {
+        this.menuBar = new Phaser.Rectangle(0, 0, game.width, 64);
         this.settingsButton = game.add.button(game.width-50, 24, 'settings-cog', this.onClickSettingsButton, this, 0, 0, 0);
         this.returnButton = game.add.button(game.width-100, 24, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
         
@@ -137,6 +135,15 @@ var playState = {
         });
         this.envText.anchor.setTo(0, 0.5);
         this.envText.fixedToCamera = true;
+
+
+        this.numSampleText = game.add.text(game.width-18, 84, this.sizeList.length + ' samples', {
+            font: '24px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.numSampleText.anchor.setTo(1, 0.5);
+        this.numSampleText.fixedToCamera = true;
     },
 
 
