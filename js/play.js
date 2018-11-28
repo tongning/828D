@@ -4,6 +4,7 @@ var playState = {
         this.projectTitle = project.title;
         this.envName = project.envName;
         this.sampleName = population.name;
+        this.sampleUnits = population.units;
         this.sampleSprite = population.sprite;
         this.populationMean = population.mean;
         this.populationStdv = population.stdv;
@@ -20,33 +21,11 @@ var playState = {
 
 
 	create: function() {
-        // Map and world
-        this.map = game.add.tilemap('desert');
-        this.map.addTilesetImage('Desert', 'tiles');
-        layer = this.map.createLayer('Ground');
-        layer.resizeWorld();
-
-
-        // Characters
-        this.createPlayer();
-        this.npcs = game.add.group(); // add MPCs
-        this.npcs.enableBody = true; 
-        sup = this.npcs.create(400, 400, 'supervisor'); // our first supervisor! 
-        
-        
-        // Samples
-        this.samples = game.add.group(); // now all samples share attributes
-        this.samples.enableBody = true; // extension of the above
-        this.sizeList = [];
-
-
-        // Meta
+        this.initWorld();
         this.initMeta();
+        this.createPlayer();
+        this.initDialogueState();
 
-
-
-        // Dialogue
-        this.initializedialogueState();
         this.phase = 0;
         this.texts = [];
         dials1 = ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of samples.", "Can you go collect some samples for me?", "Collect enough samples so that you can know your mean for sure!", ""];
@@ -89,19 +68,63 @@ var playState = {
     render: function() {
         /* need to change the depth of this menu bar*/
         // game.debug.geom(this.menuBar,'#ffffff');
-
-        this.fundingText.setText("$" + String(game.totalFunding));
-        this.numSamplesText.setText(this.sizeList.length + ' samples');
+        this.fundingText.setText('$' + String(game.totalFunding));
+        this.spendingText.setText('($' + String(this.roundSpend) + ')');
+        this.numSamplesText.setText(this.measurementList.length + ' samples');
         this.samplesText.setText(this.genSamplesText());
 
         // game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
     },
+
+
+    initWorld: function() {
+        this.initMap();
+        this.initNpcs();
+        this.initSamples();
+    },
+
 
     initMeta: function() {
         this.initPopupState();
         this.initMenu();
         this.initQuestInfo();
         this.initKeyMapping();
+        this.roundSpend = 0;
+    },
+
+
+    createPlayer: function() {
+        this.player = game.add.sprite(450, 80, 'player');
+        this.cursors = game.input.keyboard.createCursorKeys();
+
+        this.player.anchor.setTo(0.5, 0.5);
+        game.physics.arcade.enable(this.player);
+        this.playerSpeed = 250;
+
+        game.camera.follow(this.player);
+        this.player.body.collideWorldBounds = true;
+    },
+
+
+    initMap: function() {
+        this.map = game.add.tilemap('desert');
+        this.map.addTilesetImage('Desert', 'tiles');
+        layer = this.map.createLayer('Ground');
+        layer.resizeWorld();
+    },
+
+
+    initNpcs: function() {
+        this.npcs = game.add.group(); // add MPCs
+        this.npcs.enableBody = true; 
+        this.npcs.create(400, 400, 'supervisor'); // our first supervisor! 
+    },
+
+
+    initSamples: function() {
+        this.samples = game.add.group(); 
+        this.samples.enableBody = true; 
+        this.measurementList = [];
     },
 
 
@@ -117,13 +140,22 @@ var playState = {
 
     initQuestInfo: function() {
         // total funding remaining
-        this.fundingText = game.add.text(game.world.centerX, 48, "$"+String(game.totalFunding), {
+        this.fundingText = game.add.text(game.world.centerX, 48, '', {
             font: '48px Arial',
             fill: '000000',
             align: 'center',
         });
         this.fundingText.anchor.setTo(0.5, 0.5);
         this.fundingText.fixedToCamera = true;
+
+        // total spent during this visit
+        this.spendingText = game.add.text(game.world.centerX, 92, '', {
+            font: '24px Arial',
+            fill: 'A9A9A9',
+            align: 'center',
+        });
+        this.spendingText.anchor.setTo(0.5, 0.5);
+        this.spendingText.fixedToCamera = true;
 
         // project title
         this.projectText = game.add.text(10, 48, this.projectTitle, {
@@ -144,7 +176,7 @@ var playState = {
         this.envText.fixedToCamera = true;
 
         // number of samples
-        this.numSamplesText = game.add.text(game.width-18, 84, this.sizeList.length + ' samples', {
+        this.numSamplesText = game.add.text(game.width-18, 84, '', {
             font: '24px Arial',
             fill: '000000',
             align: 'right',
@@ -153,7 +185,7 @@ var playState = {
         this.numSamplesText.fixedToCamera = true;
 
         // top 5 data samples
-        this.samplesText = game.add.text(game.width-18, 108, this.genSamplesText(), {
+        this.samplesText = game.add.text(game.width-18, 108, '', {
             font: '18px Arial',
             fill: '000000',
             align: 'right',
@@ -175,13 +207,13 @@ var playState = {
     },
 
 
-
     genSamplesText: function( maxShown=5 ) {
-        var listLen = this.sizeList.length;
+        var listLen = this.measurementList.length;
         var numShown = Math.min(maxShown, listLen);
         var samplesText = '';
         for (var i = 0; i < numShown; i++) {
-            samplesText += String(this.sizeList[listLen-i-1])+'\n';
+            samplesText += String(this.measurementList[listLen-i-1]) + this.sampleUnits + '\n';
+
         }
         return samplesText
     },
@@ -198,7 +230,14 @@ var playState = {
     },
 
 
-    initializedialogueState: function() {
+
+
+
+
+
+
+
+    initDialogueState: function() {
         this.dialogueState = {
             tween: null,
             popup: null,
@@ -293,18 +332,18 @@ var playState = {
         
             if (this.texts.length == 0) {
                 game.paused = false;
-                this.generateSamples(20);
+                this.genSamples(20);
                 this.phase = this.phase + 1;
                 this.texts = this.dials.shift(); // NEED TO FIX
             }
         }
         if (this.phase == 2){
             this.closePopupDialogue();
-            if(this.sizeList.length >= 5){
+            if(this.measurementList.length >= 5){
 
                 // preprocess the dialogues
                 //tx0 = "asd";
-                tx0 = this.texts[0] + jStat.mean(this.sizeList).toString();
+                tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
                 this.texts[0] = tx0;
                 //tx1 = "asdsaasda";
                 tx1 = this.texts[1] + this.populationMean.toString();
@@ -316,7 +355,7 @@ var playState = {
 
         if (this.phase == 3) {
             this.closePopupDialogue();
-            if(this.sizeList.length >= 5){
+            if(this.measurementList.length >= 5){
 
                 game.paused = true;
                 this.processDialogue();
@@ -325,24 +364,24 @@ var playState = {
                     game.paused = false;
                     this.phase = this.phase + 1;
                     this.texts =this.dials.shift();// NEED TO FIX
-                    this.sizeList = []
+                    this.measurementList = []
                 }
             }
         }
 
         if (this.phase == 4){
             this.closePopupDialogue();
-            if(this.sizeList.length >= 5){
+            if(this.measurementList.length >= 5){
 
                 // preprocess the dialogues
                 //tx0 = "asd";
-                tx0 = this.texts[0] + jStat.mean(this.sizeList).toString();
+                tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
                 this.texts[0] = tx0;
                 //tx1 = "asdsaasda";
                 tx1 = this.texts[1] + this.populationMean.toString();
                 this.texts[1] = tx1;
 
-                deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.sizeList) - this.populationMean)/this.populationStdv    )  )
+                deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.measurementList) - this.populationMean)/this.populationStdv    )  )
                 game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
                 console.log("reputation gained: " +  deltaReputation)
                 //tx2 = this.texts[2] //+ deltaReputation.toString();
@@ -355,7 +394,7 @@ var playState = {
 
         if (this.phase == 5) {
             this.closePopupDialogue();
-            if(this.sizeList.length >= 5){
+            if(this.measurementList.length >= 5){
 
                 game.paused = true;
                 this.processDialogue();
@@ -374,6 +413,13 @@ var playState = {
         }
 
     },
+
+
+
+
+
+
+
 
 
     initPopupState: function() {
@@ -401,24 +447,19 @@ var playState = {
         this.popupState.popupText.anchor.set(0.5);
         this.popupState.popupText.visible = false;
 
-
         this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.popupState.spsp.onDown.add(this.progDialogue, this);
     },
 
 
-    generatePopupText: function(dataValue) {
+    genPopupText: function(dataValue) {
         return "You found a\nBLUE " + this.sampleName + "\nSize: "+dataValue+"mm\nPress ESC to continue"
     },
 
 
-    generateDataValueFromDistr: function() {
-        return this.round(jStat.normal.sample(this.populationMean,this.populationStdv),2);
-    },
-
-
-    round: function (value, decimals) {
-        return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+    genDataValue: function() {
+        var val = jStat.normal.sample(this.populationMean,this.populationStdv);
+        return Math.round(val * 100) / 100;
     },
 
 
@@ -459,37 +500,34 @@ var playState = {
 
 
 
-    createPlayer: function() {
-        this.player = game.add.sprite(450, 80, 'player');
-        this.cursors = game.input.keyboard.createCursorKeys();
-
-        this.player.anchor.setTo(0.5, 0.5);
-        game.physics.arcade.enable(this.player);
-        this.playerSpeed = 250;
-
-        game.camera.follow(this.player);
-        this.player.body.collideWorldBounds = true;
-    },
 
 
-    generateSamples: function(totSamples) {
+
+
+
+    genSamples: function(totSamples) {
         // create samples.
         for (var i = 0; i < totSamples; i++) {
-            locX = this.map.tileWidth * this.map.width * Math.random();
-            locY = this.map.tileHeight * this.map.height * Math.random();
+            locX = game.width * Math.random();
+            locY = game.height * Math.random();
             var sample = this.samples.create(locX , locY, 'sample');
         }
     },
 
 
     collectSample: function (player, sample) {
-        sample.kill();
-        sampleValue = this.generateDataValueFromDistr();
-
-        this.sizeList.push(sampleValue)
-        this.scoreText = 'Score: ' + this.sizeList.toString();
-        // this.openPopupWindow(this.generatePopupText(sampleValue));
-        this.generateSamples(1); // replenishing samples. 
+        if (game.totalFunding > this.processCost) {
+            game.totalFunding -= this.processCost;
+            this.roundSpend += this.processCost;
+            sample.kill();
+            sampleValue = this.genDataValue();
+            this.measurementList.push(sampleValue)
+            this.scoreText = 'Score: ' + this.measurementList.toString();
+            // this.openPopupWindow(this.genPopupText(sampleValue));
+            this.genSamples(1); // replenishing samples. 
+        } else {
+            console.log('Insufficient funding!');
+        }
     },
 
     

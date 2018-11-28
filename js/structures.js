@@ -1,4 +1,4 @@
-function Population( name, mean, units, stdv, prodPeriod, processCost, sprite ) {
+function Population( name, mean, stdv, units, prodPeriod, processCost, sprite ) {
 	this.name = name;
 	this.mean = mean;
 	this.units = units; 
