@@ -38,9 +38,9 @@ var playState = {
         this.sizeList = [];
 
 
-        // Buttons
+        // Meta
         this.initializePopupState();
-        this.initializeReturnButton();
+        this.initializeMenuOptions();
 
 
         // Dialogue
@@ -57,10 +57,17 @@ var playState = {
         this.dials = [dials1, dials2, dials3];
     },
 
+    initializeMenuOptions: function() {
+        this.settingsButton = game.add.button(game.width-50, 20, 'settings-cog', this.onClickReturnButton, this, 0, 0, 0);
+        this.returnButton = game.add.button(game.width-100, 20, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
+        
+        this.settingsButton.fixedToCamera = true;
+        this.returnButton.fixedToCamera = true;
+    },
+
 
     initializeReturnButton: function() {
-        this.returnButton = game.add.button(game.width-100, 20, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
-        this.returnButton.fixedToCamera = true;
+
     },
 
 
