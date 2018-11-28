@@ -90,8 +90,10 @@ var playState = {
         /* need to change the depth of this menu bar*/
         // game.debug.geom(this.menuBar,'#ffffff');
 
+        this.fundingText.setText("$" + String(game.totalFunding));
+        this.numSamplesText.setText(this.sizeList.length + ' samples');
+
         // game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
-        
     },
 
     initMeta: function() {
@@ -140,13 +142,13 @@ var playState = {
         this.envText.fixedToCamera = true;
 
 
-        this.numSampleText = game.add.text(game.width-18, 84, this.sizeList.length + ' samples', {
+        this.numSamplesText = game.add.text(game.width-18, 84, this.sizeList.length + ' samples', {
             font: '24px Arial',
             fill: '000000',
             align: 'right',
         });
-        this.numSampleText.anchor.setTo(1, 0.5);
-        this.numSampleText.fixedToCamera = true;
+        this.numSamplesText.anchor.setTo(1, 0.5);
+        this.numSamplesText.fixedToCamera = true;
     },
 
 
