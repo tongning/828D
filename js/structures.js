@@ -1,3 +1,30 @@
+function Environment( key, tilemap, tiles, moveMultiplier=1, prodMultiplier=1 ) {
+	this.key = key;							// keyword of the tilemap used by the environment
+	this.tilemap = tilemap;					// name of the tilemap file used by this environment 	
+	this.tiles = tiles;						// name of the tilemap image file used by this map
+	this.moveMultiplier = moveMultiplier;	// multiplier to the movement speed of the player
+	this.prodMultiplier = prodMultiplier;	// multiplier to production rate of samples
+}
+
+Environment.prototype = {
+    constructor: Environment,
+}
+
+
+function Grant( recommendedRep, duration=30, maxFunding ) {
+	this.recommendedRep = recommendedRep;
+	this.maxFunding = maxFunding
+	this.deadline = 10;
+}
+
+Grant.prototype = {
+	constructor: Grant,
+	generateDeadline: function() {
+		return
+	},
+}
+
+
 function Population( name, mean, stdv, units, prodPeriod, processCost, sprite ) {
 	this.name = name;
 	this.mean = mean;
@@ -31,7 +58,6 @@ function Project( title, description, funding, population, recommendedRep ) {
 	this.envTilemap = 'a.png';
 	// reputation award 
 }
-
 
 Project.prototype = {
 	apply:function () {

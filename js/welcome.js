@@ -61,4 +61,6 @@ var welcomeState = {
 	start: function() {
 		game.state.start('menu');
 	},
+
+
 };
