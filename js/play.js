@@ -1,5 +1,8 @@
 var playState = {
-    init: function( population ) {
+    init: function( project ) {
+        var population = project.population;
+        this.projectTitle = project.name;
+        this.environment = 'Florida';
         this.sampleName = population.name;
         this.sampleSprite = population.sprite;
         this.populationMean = population.mean;
@@ -50,6 +53,15 @@ var playState = {
         this.fundingText.fixedToCamera = true;
 
 
+        this.projectText = game.add.text(10, 48, this.projectTitle, {
+            font: '32px Arial',
+            fill: '000000',
+            align: 'left',
+        });
+        this.projectText.anchor.setTo(0, 0.5);
+        this.projectText.fixedToCamera = true;
+
+
         // Dialogue
         this.initializedialogueState();
         this.phase = 0;
@@ -89,8 +101,8 @@ var playState = {
 
 
     render: function() {
-        game.make.text(this.fundingText, )
-        game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
+        // game.make.text(this.fundingText, )
+        // game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
         game.debug.text(this.scoreText, 32, 90, 'rgb(0,0,0)');
     },
 

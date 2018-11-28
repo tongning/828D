@@ -48,26 +48,23 @@ var menuState = {
 		var p1 = projects[0];
 		var p2 = projects[1];
 		var p3 = projects[2];
-		var population1 = p1.population;
-		var population2 = p2.population;
-		var population3 = p3.population;
 
 		this.addMenuOption(p1.name, p1.description + "\nFunding: " 
 			+ p1.fundingAward + "\nRecommended Reputation: " + p1.recommendedRep,
 			function () {
-				game.state.start('play', false, false, population1);
+				game.state.start('play', false, false, p1);
 		});
 
 		this.addMenuOption(p2.name, p2.description + "\nFunding: " 
 			+ p2.fundingAward + "\nRecommended Reputation: " + p2.recommendedRep,
 			function () {
-				game.state.start('play', false, false, population2);
+				game.state.start('play', false, false, p2);
 		});
 
 		this.addMenuOption(p3.name, p3.description + "\nFunding: " 
 			+ p3.fundingAward + "\nRecommended Reputation: " + p3.recommendedRep,
 			function () {
-				game.state.start('play', false, false, population3);
+				game.state.start('play', false, false, p3);
 		});
 
 
