@@ -11,43 +11,41 @@ var playState = {
 
     preload: function() {
         game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
         game.load.image('sample', this.sampleSprite);
     },
 
 
 	create: function() {
-        this.phase = 0; // dialogue var
-
+        // Map and world
         this.map = game.add.tilemap('desert');
         this.map.addTilesetImage('Desert', 'tiles');
         layer = this.map.createLayer('Ground');
         layer.resizeWorld();
 
+
+        // Characters
         this.createPlayer();
-        //
-
-        //this.score = 0;
-        this.scoreText = 'Score: ' //+ this.score;
-
-        this.samples = game.add.group(); // now all samples share attributes
-        this.samples.enableBody = true; // extension of the above
-
         this.npcs = game.add.group(); // add MPCs
         this.npcs.enableBody = true; 
         sup = this.npcs.create(400, 400, 'supervisor'); // our first supervisor! 
-
-        this.initializePopupState();
-        this.initializedialogueState();
-
-
-        // statistics
+        
+        
+        // Samples
+        this.scoreText = 'Score: '
+        this.samples = game.add.group(); // now all samples share attributes
+        this.samples.enableBody = true; // extension of the above
         this.sizeList = [];
 
-        //this.generateSamples(12);
+
+        // Buttons
+        this.initializePopupState();
         this.initializeReturnButton();
 
 
-
+        // Dialogue
+        this.initializedialogueState();
+        this.phase = 0;
         this.texts = [];
         dials1 = ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of samples.", "Can you go collect some samples for me?", "Collect enough samples so that you can know your mean for sure!", ""];
 
@@ -57,14 +55,14 @@ var playState = {
         dials3 = ["Your current mean is: ", "The actual mean is: ", "Now, go back to the lab! ", ""]
 
         this.dials = [dials1, dials2, dials3];
-
-
     },
+
 
     initializeReturnButton: function() {
         this.returnButton = game.add.button(20, game.height-100, 'button', this.onClickReturnButton, this, 0, 0, 0);
         this.returnButton.fixedToCamera = true;
     },
+
 
     update: function() {
         //game.physics.arcade.collide(player, layer);
@@ -89,10 +87,12 @@ var playState = {
         //game.physics.arcade.overlap(this.player, this.samples, this.collectsample, null, this);
     },
 
+
     onClickReturnButton: function() {
         game.state.start('menu');
         console.log("Return button was clicked");
     },
+
 
     initializedialogueState: function() {
         this.dialogueState = 
@@ -125,6 +125,7 @@ var playState = {
         this.dialogueState.spsp.onDown.add(this.progDialogue, this);
     },
 
+
         openPopupDialogue: function (newPopupTextString) {
             var dialogueState = this.dialogueState;
             if ((dialogueState.tween !== null && dialogueState.tween.isRunning) 
@@ -147,6 +148,7 @@ var playState = {
         
     },
 
+
     closePopupDialogue: function() {
         var dialogueState = this.dialogueState;
         if (dialogueState.tween && dialogueState.tween.isRunning || dialogueState.popup.scale.x === 0.1) {
@@ -157,9 +159,6 @@ var playState = {
         dialogueState.tween = game.add.tween(dialogueState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
         dialogueState.isPopupOpen = false;
     },
-
-
-
 
 
     processDialogue: function(){
@@ -177,6 +176,7 @@ var playState = {
 
         this.openPopupDialogue();
     },
+
 
     progDialogue: function (player, sample){
         if (this.phase == 0) {
@@ -304,17 +304,21 @@ var playState = {
         this.popupState.spsp.onDown.add(this.progDialogue, this);
     },
 
+
     generatePopupText: function(dataValue) {
         return "You found a\nBLUE " + this.sampleName + "\nSize: "+dataValue+"mm\nPress ESC to continue"
     },
+
 
     generateDataValueFromDistr: function() {
         return this.round(jStat.normal.sample(this.populationMean,this.populationStdv),2);
     },
 
+
     round: function (value, decimals) {
         return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
     },
+
 
     openPopupWindow: function (newPopupTextString) {
             var popupState = this.popupState;
@@ -338,6 +342,7 @@ var playState = {
         
     },
 
+
     closePopupWindow: function() {
         var popupState = this.popupState;
         if (popupState.tween && popupState.tween.isRunning || popupState.popup.scale.x === 0.1) {
@@ -348,7 +353,6 @@ var playState = {
         popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
         popupState.isPopupOpen = false;
     },
-
 
 
     render: function() {
@@ -379,6 +383,7 @@ var playState = {
         }
     },
 
+
     collectSample: function (player, sample) {
         sample.kill();
         //this.score += 10;
@@ -390,9 +395,6 @@ var playState = {
         this.openPopupWindow(this.generatePopupText(sampleValue));
         this.generateSamples(1); // replenishing samples. 
     },
-
-
-
 
     
 };
