@@ -41,6 +41,13 @@ var playState = {
         // Meta
         this.initializePopupState();
         this.initializeMenuOptions();
+        this.fundingText = game.add.text(game.world.centerX, 48, "$"+String(game.totalFunding), {
+            font: '48px Arial',
+            fill: '000000',
+            align: 'center',
+        });
+        this.fundingText.anchor.setTo(0.5, 0.5);
+        this.fundingText.fixedToCamera = true;
 
 
         // Dialogue
@@ -57,19 +64,6 @@ var playState = {
         this.dials = [dials1, dials2, dials3];
     },
 
-    initializeMenuOptions: function() {
-        this.settingsButton = game.add.button(game.width-50, 20, 'settings-cog', this.onClickReturnButton, this, 0, 0, 0);
-        this.returnButton = game.add.button(game.width-100, 20, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
-        
-        this.settingsButton.fixedToCamera = true;
-        this.returnButton.fixedToCamera = true;
-    },
-
-
-    initializeReturnButton: function() {
-
-    },
-
 
     update: function() {
         //game.physics.arcade.collide(player, layer);
@@ -78,13 +72,13 @@ var playState = {
         
         if (!this.popupState.isPopupOpen) {
             if (this.cursors.left.isDown) {
-                this.player.body.velocity.x = -this.playerSpeed;
+                this.player.body.velocity.x -= this.playerSpeed;
             } else if (this.cursors.right.isDown) {
-                this.player.body.velocity.x = this.playerSpeed;
+                this.player.body.velocity.x += this.playerSpeed;
             } else if (this.cursors.up.isDown) {
-                this.player.body.velocity.y = -this.playerSpeed;
+                this.player.body.velocity.y -= this.playerSpeed;
             } else if (this.cursors.down.isDown) {
-                this.player.body.velocity.y = this.playerSpeed;
+                this.player.body.velocity.y += this.playerSpeed;
             }
         }
 
@@ -94,15 +88,35 @@ var playState = {
     },
 
 
+    render: function() {
+        game.make.text(this.fundingText, )
+        game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
+        game.debug.text(this.scoreText, 32, 90, 'rgb(0,0,0)');
+    },
+
+
+    initializeMenuOptions: function() {
+        this.settingsButton = game.add.button(game.width-50, 24, 'settings-cog', this.onClickSettingsButton, this, 0, 0, 0);
+        this.returnButton = game.add.button(game.width-100, 24, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
+        
+        this.settingsButton.fixedToCamera = true;
+        this.returnButton.fixedToCamera = true;
+    },
+
+
     onClickReturnButton: function() {
         game.state.start('menu');
         console.log("Return button was clicked");
     },
 
 
+    onClickSettingsButton: function() {
+        console.log("Settings button was clicked");
+    },
+
+
     initializedialogueState: function() {
-        this.dialogueState = 
-        {
+        this.dialogueState = {
             tween: null,
             popup: null,
             popupText: null,
@@ -132,26 +146,26 @@ var playState = {
     },
 
 
-        openPopupDialogue: function (newPopupTextString) {
-            var dialogueState = this.dialogueState;
-            if ((dialogueState.tween !== null && dialogueState.tween.isRunning) 
-            || dialogueState.popup.scale.x === 1) {
-                return;
-            }
-            dialogueState.popup.position.x = game.camera.x + (game.width / 2);
-            dialogueState.popup.position.y = game.camera.y + (game.height / 2);
+    openPopupDialogue: function (newPopupTextString) {
+        var dialogueState = this.dialogueState;
+        if ((dialogueState.tween !== null && dialogueState.tween.isRunning) 
+        || dialogueState.popup.scale.x === 1) {
+            return;
+        }
+        dialogueState.popup.position.x = game.camera.x + (game.width / 2);
+        dialogueState.popup.position.y = game.camera.y + (game.height / 2);
 
-            var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-            dialogueState.popupText = game.add.text(0, 0, newPopupTextString, style);
-            dialogueState.popupText.x = Math.floor(dialogueState.popup.x + dialogueState.popup.width / 2);
-            dialogueState.popupText.y = Math.floor(dialogueState.popup.y + dialogueState.popup.height / 2);
-            dialogueState.popupText.anchor.set(0.5)
-            
-            dialogueState.popupText.visible = true;
-            //  Create a tween that will pop-open the Dialogue, but only if it's not already tweening or open
-            dialogueState.tween = game.add.tween(dialogueState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
-            dialogueState.isPopupOpen = true;
+        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        dialogueState.popupText = game.add.text(0, 0, newPopupTextString, style);
+        dialogueState.popupText.x = Math.floor(dialogueState.popup.x + dialogueState.popup.width / 2);
+        dialogueState.popupText.y = Math.floor(dialogueState.popup.y + dialogueState.popup.height / 2);
+        dialogueState.popupText.anchor.set(0.5)
         
+        dialogueState.popupText.visible = true;
+        //  Create a tween that will pop-open the Dialogue, but only if it's not already tweening or open
+        dialogueState.tween = game.add.tween(dialogueState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
+        dialogueState.isPopupOpen = true;
+    
     },
 
 
@@ -280,8 +294,7 @@ var playState = {
 
 
     initializePopupState: function() {
-        this.popupState = 
-        {
+        this.popupState = {
             tween: null,
             popup: null,
             popupText: null,
@@ -327,24 +340,24 @@ var playState = {
 
 
     openPopupWindow: function (newPopupTextString) {
-            var popupState = this.popupState;
-            if ((popupState.tween !== null && popupState.tween.isRunning) 
-            || popupState.popup.scale.x === 1) {
-                return;
-            }
-            popupState.popup.position.x = game.camera.x + (game.width / 2);
-            popupState.popup.position.y = game.camera.y + (game.height / 2);
+        var popupState = this.popupState;
+        if ((popupState.tween !== null && popupState.tween.isRunning) 
+        || popupState.popup.scale.x === 1) {
+            return;
+        }
+        popupState.popup.position.x = game.camera.x + (game.width / 2);
+        popupState.popup.position.y = game.camera.y + (game.height / 2);
 
-            var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-            popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
-            popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
-            popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
-            popupState.popupText.anchor.set(0.5)
-            
-            popupState.popupText.visible = true;
-            //  Create a tween that will pop-open the window, but only if it's not already tweening or open
-            popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
-            popupState.isPopupOpen = true;
+        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
+        popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
+        popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
+        popupState.popupText.anchor.set(0.5)
+        
+        popupState.popupText.visible = true;
+        //  Create a tween that will pop-open the window, but only if it's not already tweening or open
+        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
+        popupState.isPopupOpen = true;
         
     },
 
@@ -361,10 +374,6 @@ var playState = {
     },
 
 
-    render: function() {
-        game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
-        game.debug.text(this.scoreText, 32, 90, 'rgb(0,0,0)');
-    },
 
 
     createPlayer: function() {
