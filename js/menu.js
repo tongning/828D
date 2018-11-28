@@ -158,9 +158,9 @@ var menuState = {
 
 	generateProjects: function(numProjects) {
 		// Population( name, mean, stdv, prodPeriod, processCost, sprite )
-		var pop1 = new Population('diamond', 10, 1, 10, 200, 'assets/sprites/diamond.png');
-		var pop2 = new Population('mushroom', 100, 10, 15, 200, 'assets/sprites/mushroom.png');
-		var pop3 = new Population('car', 3000, 300, 15, 200, 'assets/sprites/car.png');
+		var pop1 = new Population('diamond', 10, 1, 'mm', 10, 200, 'assets/sprites/diamond.png');
+		var pop2 = new Population('mushroom', 10, 2, 'cm', 15, 50, 'assets/sprites/mushroom.png');
+		var pop3 = new Population('car', 3.5, 1, 'm', 15, 2000, 'assets/sprites/car.png');
 		
 		var desc1 = 'Find the average weight of diamonds in the mine!'
 		var desc2 = 'Find the average wingspan of birds in the forest!'

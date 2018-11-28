@@ -92,6 +92,7 @@ var playState = {
 
         this.fundingText.setText("$" + String(game.totalFunding));
         this.numSamplesText.setText(this.sizeList.length + ' samples');
+        this.samplesText.setText(this.genSamplesText());
 
         // game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
     },
@@ -115,6 +116,7 @@ var playState = {
 
 
     initQuestInfo: function() {
+        // total funding remaining
         this.fundingText = game.add.text(game.world.centerX, 48, "$"+String(game.totalFunding), {
             font: '48px Arial',
             fill: '000000',
@@ -123,7 +125,7 @@ var playState = {
         this.fundingText.anchor.setTo(0.5, 0.5);
         this.fundingText.fixedToCamera = true;
 
-
+        // project title
         this.projectText = game.add.text(10, 48, this.projectTitle, {
             font: '32px Arial',
             fill: '000000',
@@ -132,7 +134,7 @@ var playState = {
         this.projectText.anchor.setTo(0, 0.5);
         this.projectText.fixedToCamera = true;
 
-
+        // environment
         this.envText = game.add.text(18, 84, this.envName, {
             font: '24px Arial',
             fill: '000000',
@@ -141,7 +143,7 @@ var playState = {
         this.envText.anchor.setTo(0, 0.5);
         this.envText.fixedToCamera = true;
 
-
+        // number of samples
         this.numSamplesText = game.add.text(game.width-18, 84, this.sizeList.length + ' samples', {
             font: '24px Arial',
             fill: '000000',
@@ -149,6 +151,15 @@ var playState = {
         });
         this.numSamplesText.anchor.setTo(1, 0.5);
         this.numSamplesText.fixedToCamera = true;
+
+        // top 5 data samples
+        this.samplesText = game.add.text(game.width-18, 108, this.genSamplesText(), {
+            font: '18px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.samplesText.anchor.setTo(1, 0);
+        this.samplesText.fixedToCamera = true;
     },
 
 
@@ -161,6 +172,18 @@ var playState = {
         this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+    },
+
+
+
+    genSamplesText: function( maxShown=5 ) {
+        var listLen = this.sizeList.length;
+        var numShown = Math.min(maxShown, listLen);
+        var samplesText = '';
+        for (var i = 0; i < numShown; i++) {
+            samplesText += String(this.sizeList[listLen-i-1])+'\n';
+        }
+        return samplesText
     },
 
 
@@ -465,7 +488,7 @@ var playState = {
 
         this.sizeList.push(sampleValue)
         this.scoreText = 'Score: ' + this.sizeList.toString();
-        this.openPopupWindow(this.generatePopupText(sampleValue));
+        // this.openPopupWindow(this.generatePopupText(sampleValue));
         this.generateSamples(1); // replenishing samples. 
     },
 
