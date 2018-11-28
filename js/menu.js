@@ -120,7 +120,7 @@ var menuState = {
 		this.reputationHealthBar = new HealthBar(this.game, barConfig);
 		this.reputationHealthBar.setPercent(barPercent);
 
-		console.log(this.reputationHealthBar.width);
+		// console.log(this.reputationHealthBar.width);
 		var reputationLabel = game.add.text(
 			barX, 
 			barY - 50, 

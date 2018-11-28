@@ -59,14 +59,13 @@ var playState = {
 
 
     initializeReturnButton: function() {
-        this.returnButton = game.add.button(20, game.height-100, 'button', this.onClickReturnButton, this, 0, 0, 0);
+        this.returnButton = game.add.button(game.width-100, 20, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
         this.returnButton.fixedToCamera = true;
     },
 
 
     update: function() {
         //game.physics.arcade.collide(player, layer);
-        // this.player.body.angularVelocity = 0;
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
         

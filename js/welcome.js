@@ -12,6 +12,7 @@ var welcomeState = {
 		*/
 		game.load.spritesheet('talking-head', 'assets/sprites/talking-head.png', 255, 330);
 		game.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', 193, 71);
+		game.load.spritesheet('home-button', 'assets/buttons/home.png',0);
 		game.load.image('background', 'assets/images/empty_background.jpg');
 		game.load.image('player', 'assets/sprites/ufo.png');
 		game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png');
