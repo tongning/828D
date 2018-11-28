@@ -4,10 +4,12 @@ var menuState = {
 		this.optionCount = 1;
 	},
 
+
 	preload: function() {
 		this.loadImages();
 		this.projects = this.generateProjects(3);
 	},
+
 
 	create: function() {
 		var backgroundImage = game.add.sprite(0, 0, 'menu-bg');
@@ -25,6 +27,17 @@ var menuState = {
 		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
 	},
+	
+
+	update: function() {
+		game.date.setTime(game.date.getTime() + (game.time.elapsed * 60));
+	},
+
+
+	render: function() {
+	    game.debug.text(game.date.toDateString(), 32, 32);
+	    game.debug.text(game.date.toLocaleTimeString(), 32, 48);
+	},
 
 
 	addQuote: function(quoteX, quoteY) {
@@ -35,6 +48,7 @@ var menuState = {
 			style.quote.default);
 	},
 
+
 	addMenuTitle: function() {
 		var titleText = game.add.text(
 			game.width - 500, 
@@ -43,6 +57,7 @@ var menuState = {
 			style.navitem.hover
 			);
 	},
+
 
 	addMenuOptions: function() {
 		var p1 = projects[0];
@@ -103,6 +118,7 @@ var menuState = {
 		// });
 	},
 
+
 	addHealthBar: function(barX, barY, barLabel, barPercent) {
 		var barWidth = 250;
 		var reputationBarX = barX + barWidth/2;
@@ -125,6 +141,7 @@ var menuState = {
 			style.basiclabel.default);
 	},
 
+
 	addTalkingHead: function() {
 		talkingHead = this.game.add.sprite(300, 80, 'talking-head');
 		talkingHead.frame = 3;
@@ -132,9 +149,11 @@ var menuState = {
 		talkingHead.animations.play('animate');
 	},
 
+
 	loadImages: function () {
 		game.load.image('menu-bg', 'assets/images/menu-bg.jpg');
 	},
+
 
 	addMenuOption: function(title, description, callback) {
 		var titleSubtitleVSpace = 50;
