@@ -87,7 +87,8 @@ var playState = {
     initMeta: function() {
         this.initPopupState();
         this.initMenu();
-        this.initQuestInfo();
+        this.initStaticInfo();
+        this.initDynamicInfo();
         this.initKeyMapping();
         this.roundSpend = 0;
     },
@@ -138,25 +139,7 @@ var playState = {
     },
 
 
-    initQuestInfo: function() {
-        // total funding remaining
-        this.fundingText = game.add.text(game.world.centerX, 48, '', {
-            font: '48px Arial',
-            fill: '000000',
-            align: 'center',
-        });
-        this.fundingText.anchor.setTo(0.5, 0.5);
-        this.fundingText.fixedToCamera = true;
-
-        // total spent during this visit
-        this.spendingText = game.add.text(game.world.centerX, 92, '', {
-            font: '24px Arial',
-            fill: 'A9A9A9',
-            align: 'center',
-        });
-        this.spendingText.anchor.setTo(0.5, 0.5);
-        this.spendingText.fixedToCamera = true;
-
+    initStaticInfo: function() {
         // project title
         this.projectText = game.add.text(10, 48, this.projectTitle, {
             font: '32px Arial',
@@ -174,6 +157,36 @@ var playState = {
         });
         this.envText.anchor.setTo(0, 0.5);
         this.envText.fixedToCamera = true;
+
+        // date
+        this.envText = game.add.text(18, 114, game.date.toDateString(), {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'left',
+        });
+        this.envText.anchor.setTo(0, 0.5);
+        this.envText.fixedToCamera = true;
+    },
+
+
+    initDynamicInfo: function() {
+        // total funding remaining
+        this.fundingText = game.add.text(game.world.centerX, 48, '', {
+            font: '48px Arial',
+            fill: '000000',
+            align: 'center',
+        });
+        this.fundingText.anchor.setTo(0.5, 0.5);
+        this.fundingText.fixedToCamera = true;
+
+        // total spent during this visit
+        this.spendingText = game.add.text(game.world.centerX, 92, '', {
+            font: '24px Arial',
+            fill: 'A9A9A9',
+            align: 'center',
+        });
+        this.spendingText.anchor.setTo(0.5, 0.5);
+        this.spendingText.fixedToCamera = true;
 
         // number of samples
         this.numSamplesText = game.add.text(game.width-18, 84, '', {
