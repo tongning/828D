@@ -11,10 +11,7 @@ var playState = {
 
     preload: function() {
         game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
-        game.load.image('ufo', 'assets/sprites/ufo.png');
         game.load.image('sample', this.sampleSprite);
-        game.load.image('supervisor', 'assets/all_sprites/asuna_by_vali233.png'); // our supervisor
     },
 
 
@@ -361,7 +358,7 @@ var playState = {
 
 
     createPlayer: function() {
-        this.player = game.add.sprite(450, 80, 'ufo');
+        this.player = game.add.sprite(450, 80, 'player');
         this.cursors = game.input.keyboard.createCursorKeys();
 
         this.player.anchor.setTo(0.5, 0.5);
