@@ -1,8 +1,8 @@
 var playState = {
     init: function( project ) {
         var population = project.population;
-        this.projectTitle = project.name;
-        this.environment = 'Florida';
+        this.projectTitle = project.title;
+        this.envName = project.envName;
         this.sampleName = population.name;
         this.sampleSprite = population.sprite;
         this.populationMean = population.mean;
@@ -42,24 +42,8 @@ var playState = {
 
 
         // Meta
-        this.initializePopupState();
-        this.initializeMenuOptions();
-        this.fundingText = game.add.text(game.world.centerX, 48, "$"+String(game.totalFunding), {
-            font: '48px Arial',
-            fill: '000000',
-            align: 'center',
-        });
-        this.fundingText.anchor.setTo(0.5, 0.5);
-        this.fundingText.fixedToCamera = true;
+        this.initMeta();
 
-
-        this.projectText = game.add.text(10, 48, this.projectTitle, {
-            font: '32px Arial',
-            fill: '000000',
-            align: 'left',
-        });
-        this.projectText.anchor.setTo(0, 0.5);
-        this.projectText.fixedToCamera = true;
 
 
         // Dialogue
@@ -103,16 +87,56 @@ var playState = {
     render: function() {
         // game.make.text(this.fundingText, )
         // game.debug.text('Collect All the samples!', 32, 32, 'rgb(0,0,0)');
-        game.debug.text(this.scoreText, 32, 90, 'rgb(0,0,0)');
+        // game.debug.text(this.scoreText, 32, 90, {
+        //     font: '64px Arial',
+        //     fill: '000000',
+        //     align: 'left',
+        // });
+        
+    },
+
+    initMeta: function() {
+        this.initPopupState();
+        this.initMenu();
+        this.initQuestInfo();
     },
 
 
-    initializeMenuOptions: function() {
+    initMenu: function() {
         this.settingsButton = game.add.button(game.width-50, 24, 'settings-cog', this.onClickSettingsButton, this, 0, 0, 0);
         this.returnButton = game.add.button(game.width-100, 24, 'home-button', this.onClickReturnButton, this, 0, 0, 0);
         
         this.settingsButton.fixedToCamera = true;
         this.returnButton.fixedToCamera = true;
+    },
+
+
+    initQuestInfo: function() {
+        this.fundingText = game.add.text(game.world.centerX, 48, "$"+String(game.totalFunding), {
+            font: '48px Arial',
+            fill: '000000',
+            align: 'center',
+        });
+        this.fundingText.anchor.setTo(0.5, 0.5);
+        this.fundingText.fixedToCamera = true;
+
+
+        this.projectText = game.add.text(10, 48, this.projectTitle, {
+            font: '32px Arial',
+            fill: '000000',
+            align: 'left',
+        });
+        this.projectText.anchor.setTo(0, 0.5);
+        this.projectText.fixedToCamera = true;
+
+
+        this.envText = game.add.text(18, 84, this.envName, {
+            font: '24px Arial',
+            fill: '000000',
+            align: 'left',
+        });
+        this.envText.anchor.setTo(0, 0.5);
+        this.envText.fixedToCamera = true;
     },
 
 
@@ -305,7 +329,7 @@ var playState = {
     },
 
 
-    initializePopupState: function() {
+    initPopupState: function() {
         this.popupState = {
             tween: null,
             popup: null,

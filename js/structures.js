@@ -20,12 +20,14 @@ Population.prototype = {
 }
 
 
-function Project( name, description, funding, population, recommendedRep ) {
-	this.name = name;
+function Project( title, description, funding, population, recommendedRep ) {
+	this.title = title;
 	this.fundingAward = funding;
 	this.population = population;
 	this.recommendedRep = recommendedRep;
 	this.description = description;
+	this.envName = 'Africa';
+	this.envTilemap = 'a.png';
 	// reputation award 
 }
 
