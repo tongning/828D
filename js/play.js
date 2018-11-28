@@ -35,7 +35,6 @@ var playState = {
         
         
         // Samples
-        this.scoreText = 'Score: '
         this.samples = game.add.group(); // now all samples share attributes
         this.samples.enableBody = true; // extension of the above
         this.sizeList = [];
@@ -67,13 +66,16 @@ var playState = {
         this.player.body.velocity.y = 0;
         
         if (!this.popupState.isPopupOpen) {
-            if (this.cursors.left.isDown) {
+            if (this.leftKey.isDown || this.aKey.isDown) {
                 this.player.body.velocity.x -= this.playerSpeed;
-            } else if (this.cursors.right.isDown) {
+            }
+            if (this.rightKey.isDown || this.dKey.isDown) {
                 this.player.body.velocity.x += this.playerSpeed;
-            } else if (this.cursors.up.isDown) {
+            } 
+            if (this.upKey.isDown || this.wKey.isDown) {
                 this.player.body.velocity.y -= this.playerSpeed;
-            } else if (this.cursors.down.isDown) {
+            } 
+            if (this.downKey.isDown || this.sKey.isDown) {
                 this.player.body.velocity.y += this.playerSpeed;
             }
         }
@@ -96,6 +98,7 @@ var playState = {
         this.initPopupState();
         this.initMenu();
         this.initQuestInfo();
+        this.initKeyMapping();
     },
 
 
@@ -144,6 +147,18 @@ var playState = {
         });
         this.numSampleText.anchor.setTo(1, 0.5);
         this.numSampleText.fixedToCamera = true;
+    },
+
+
+    initKeyMapping: function() {
+        this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+        this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+        this.leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+        this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+        this.wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     },
 
 
@@ -444,8 +459,6 @@ var playState = {
 
     collectSample: function (player, sample) {
         sample.kill();
-        //this.score += 10;
-
         sampleValue = this.generateDataValueFromDistr();
 
         this.sizeList.push(sampleValue)
