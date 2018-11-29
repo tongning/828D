@@ -11,4 +11,9 @@ game.totalReputation = 30;
 game.maxReputation = 100;
 game.date = new Date(2000,0,1,0,0,0);
 
+game.projectsOngoing = [];
+game.projectsCompleted = [];
+game.projectsRejected = [];
+game.grantsAvailable = [];
+
 game.state.start('boot');

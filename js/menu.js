@@ -1,13 +1,9 @@
 // This game menu is adapted from https://github.com/MattMcFarland/phaser-menu-system.
 var menuState = {
-	init: function() {
-		this.optionCount = 1;
-	},
-
-
 	preload: function() {
 		this.loadImages();
-		this.projects = this.generateProjects(3);
+		this.optionCount = 1;
+		game.projectsOngoing = this.generateProjects(3);
 	},
 
 
@@ -26,7 +22,7 @@ var menuState = {
 		var fundingPercent = 100 * game.totalFunding / game.maxFunding;
 		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
-		
+
 	},
 
 
@@ -61,34 +57,32 @@ var menuState = {
 
 
 	addMenuOptions: function() {
-		var p1 = projects[0];
-		var p2 = projects[1];
-		var p3 = projects[2];
 
-		this.addMenuOption(p1.title, p1.description + "\nFunding: " 
-			+ p1.fundingAward + "\nRecommended Reputation: " + p1.recommendedRep,
+		this.addMenuOption(game.projectsOngoing[0].title, game.projectsOngoing[0].description 
+			+ "\nFunding: " + game.projectsOngoing[0].fundingAward 
+			+ "\nRecommended Reputation: " + game.projectsOngoing[0].recommendedRep,
 			function () {
-				game.state.start('play', false, false, p1);
+				game.state.start('play', false, false, game.projectsOngoing[0]);
 		});
 
-		this.addMenuOption(p2.title, p2.description + "\nFunding: " 
-			+ p2.fundingAward + "\nRecommended Reputation: " + p2.recommendedRep,
-			function () {
-				game.state.start('play', false, false, p2);
-		});
+		// this.addMenuOption(p2.title, p2.description + "\nFunding: " 
+		// 	+ p2.fundingAward + "\nRecommended Reputation: " + p2.recommendedRep,
+		// 	function () {
+		// 		game.state.start('play', false, false, projects[1]);
+		// });
 
-		this.addMenuOption(p3.title, p3.description + "\nFunding: " 
-			+ p3.fundingAward + "\nRecommended Reputation: " + p3.recommendedRep,
-			function () {
-				game.state.start('play', false, false, p3);
-		});
+		// this.addMenuOption(p3.title, p3.description + "\nFunding: " 
+		// 	+ p3.fundingAward + "\nRecommended Reputation: " + p3.recommendedRep,
+		// 	function () {
+		// 		game.state.start('play', false, false, projects[2]);
+		// });
 
 
 
 		// var project, population;
 
-		// for (i=0; i<this.projects.length; i++) {
-		//  	project = this.projects[i];
+		// for (i=0; i<game.projects.length; i++) {
+		//  	project = game.projects[i];
 		//  	population = project.population;
 
 		//  	this.addMenuOption(project.name, project.description 
