@@ -1,9 +1,14 @@
 var playState = {
     init: function( project ) {
+        var environment = project.environment;
         var population = project.population;
         this.projectTitle = project.title;
-        this.envName = project.envName;
-        this.sampleName = population.name;
+
+        this.envKey = environment.key;
+        this.envTilemap = environment.tilemap;
+        this.envTiles = environment.tiles;
+
+        this.sampleKey = population.key;
         this.sampleUnits = population.units;
         this.sampleSprite = population.sprite;
         this.populationMean = population.mean;
@@ -14,8 +19,8 @@ var playState = {
 
 
     preload: function() {
-        game.load.tilemap('desert', 'assets/tilemaps/maps/desert.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('tiles', 'assets/tilemaps/tiles/tmw_desert_spacing.png');
+        game.load.tilemap(this.envKey, this.envTilemap, null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('tiles', this.envTiles);
         game.load.image('sample', this.sampleSprite);
     },
 
@@ -108,7 +113,7 @@ var playState = {
 
 
     initMap: function() {
-        this.map = game.add.tilemap('desert');
+        this.map = game.add.tilemap(this.envKey);
         this.map.addTilesetImage('Desert', 'tiles');
         layer = this.map.createLayer('Ground');
         layer.resizeWorld();
@@ -150,7 +155,7 @@ var playState = {
         this.projectText.fixedToCamera = true;
 
         // environment
-        this.envText = game.add.text(18, 84, this.envName, {
+        this.envText = game.add.text(18, 84, this.envKey, {
             font: '24px Arial',
             fill: '000000',
             align: 'left',
@@ -466,7 +471,7 @@ var playState = {
 
 
     genPopupText: function(dataValue) {
-        return "You found a\nBLUE " + this.sampleName + "\nSize: "+dataValue+"mm\nPress ESC to continue"
+        return "You found a\nBLUE " + this.sampleKey + "\nSize: "+dataValue+"mm\nPress ESC to continue"
     },
 
 

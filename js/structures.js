@@ -14,7 +14,7 @@ Environment.prototype = {
 function Grant( recommendedRep, duration=30, maxFunding ) {
 	this.recommendedRep = recommendedRep;
 	this.maxFunding = maxFunding
-	this.deadline = 10;
+	this.duration = duration;
 }
 
 Grant.prototype = {
@@ -25,8 +25,8 @@ Grant.prototype = {
 }
 
 
-function Population( name, mean, stdv, units, prodPeriod, processCost, sprite ) {
-	this.name = name;
+function Population( key, mean, stdv, units, prodPeriod, processCost, sprite ) {
+	this.key = key;
 	this.mean = mean;
 	this.units = units; 
 	this.stdv = stdv;
@@ -48,14 +48,14 @@ Population.prototype = {
 }
 
 
-function Project( title, description, funding, population, recommendedRep ) {
+function Project( title, description, funding, population, environment, repMultiplier ) {
 	this.title = title;
+	this.description = description;
 	this.fundingAward = funding;
 	this.population = population;
-	this.recommendedRep = recommendedRep;
-	this.description = description;
-	this.envName = 'Africa';
-	this.envTilemap = 'a.png';
+	this.environment = environment;
+	this.repMultiplier = repMultiplier;
+	
 	// reputation award 
 }
 
