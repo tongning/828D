@@ -57,60 +57,37 @@ var menuState = {
 
 
 	addMenuOptions: function() {
+		for (i=0; i<game.projectsOngoing.length; i++) {
+			this.addMenuOption(game.projectsOngoing[i]);	
+		}
+	},
 
-		this.addMenuOption(game.projectsOngoing[0].title, game.projectsOngoing[0].description 
-			+ "\nFunding: " + game.projectsOngoing[0].fundingAward 
-			+ "\nRecommended Reputation: " + game.projectsOngoing[0].recommendedRep,
-			function () {
-				game.state.start('play', false, false, game.projectsOngoing[0]);
+
+	addMenuOption: function( project ) {
+		this.showMenuOption(project.title, project.description + "\nFunding: " 
+			+ project.fundingAward + "\nRecommended Reputation: " + project.recommendedRep,
+			function () { game.state.start('play', false, false, project); }
+		);
+	},
+
+
+	showMenuOption: function(title, details, callback) {
+		var titleSubtitleVSpace = 50;
+		var menuOptionVSpace = 150;
+		var headPadding = 50;
+
+		var bigText = game.add.text(game.width - 500, (this.optionCount * menuOptionVSpace)+headPadding, title, style.navitem.default);
+		bigText.inputEnabled = true;
+		bigText.events.onInputUp.add(callback);
+		bigText.events.onInputOver.add(function (target) {
+		  target.setStyle(style.navitem.hover);
+		});
+		bigText.events.onInputOut.add(function (target) {
+		  target.setStyle(style.navitem.default);
 		});
 
-		// this.addMenuOption(p2.title, p2.description + "\nFunding: " 
-		// 	+ p2.fundingAward + "\nRecommended Reputation: " + p2.recommendedRep,
-		// 	function () {
-		// 		game.state.start('play', false, false, projects[1]);
-		// });
-
-		// this.addMenuOption(p3.title, p3.description + "\nFunding: " 
-		// 	+ p3.fundingAward + "\nRecommended Reputation: " + p3.recommendedRep,
-		// 	function () {
-		// 		game.state.start('play', false, false, projects[2]);
-		// });
-
-
-
-		// var project, population;
-
-		// for (i=0; i<game.projects.length; i++) {
-		//  	project = game.projects[i];
-		//  	population = project.population;
-
-		//  	this.addMenuOption(project.name, project.description 
-		//  			+ "\nFunding: " + project.fundingAward 
-		//  			+ "\nRecommended Reputation: " + project.recommendedRep,
-		// 		function () {
-		// 			game.state.start('play', false, false, population);
-		// 	});
-		// }
-
-		// this.addMenuOption(p1.name, 
-		// 	"Find the average weight of diamonds in the mine! \nFunding: " + p1.fundingAward
-		// 		+ "\nRecommended Reputation: " + p1.recommendedRep,
-		// 	function () {
-		// 		game.state.start('play', false, false, population);
-		// });
-
-		// this.addMenuOption('Tropics', 
-		// 	"Find the average wingspan of birds in the forest!\nDifficulty: Hard\nImpact: Medium",
-		// 	function () {
-		// 		game.state.start('play', false, false, population);
-		// });
-
-		// this.addMenuOption('The Arctic', 
-		// 	"Find the average thickness of the arctic ice sheets.\nDifficulty: Medium\nImpact: Medium",
-		// 	function () {
-		// 		game.state.start('play', false, false, population);
-		// });
+		var smallText = game.add.text(game.width - 500, (this.optionCount * menuOptionVSpace + titleSubtitleVSpace)+headPadding, details, style.navitem.subtitle);
+		this.optionCount ++;
 	},
 
 
@@ -147,26 +124,6 @@ var menuState = {
 
 	loadImages: function () {
 		game.load.image('menu-bg', 'assets/images/menu-bg.jpg');
-	},
-
-
-	addMenuOption: function(title, description, callback) {
-		var titleSubtitleVSpace = 50;
-		var menuOptionVSpace = 150;
-		var headPadding = 50;
-
-		var bigText = game.add.text(game.width - 500, (this.optionCount * menuOptionVSpace)+headPadding, title, style.navitem.default);
-		bigText.inputEnabled = true;
-		bigText.events.onInputUp.add(callback);
-		bigText.events.onInputOver.add(function (target) {
-		  target.setStyle(style.navitem.hover);
-		});
-		bigText.events.onInputOut.add(function (target) {
-		  target.setStyle(style.navitem.default);
-		});
-
-		var smallText = game.add.text(game.width - 500, (this.optionCount * menuOptionVSpace + titleSubtitleVSpace)+headPadding, description, style.navitem.subtitle);
-		this.optionCount ++;
 	},
 
 
