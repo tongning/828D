@@ -26,6 +26,7 @@ var menuState = {
 		var fundingPercent = 100 * game.totalFunding / game.maxFunding;
 		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
+		
 	},
 
 
@@ -184,14 +185,14 @@ var menuState = {
 		var env1 = new Environment('Desert', 'assets/tilemaps/maps/desert.json', 
 			'assets/tilemaps/tiles/tmw_desert_spacing.png');
 
-		var desc1 = 'Find the average weight of diamonds in the mine!';
-		var desc2 = 'Find the average wingspan of birds in the forest!';
-		var desc3 = 'Find the average thickness of the arctic ice sheets!';
+		// var desc1 = 'Find the average weight of diamonds in the mine!';
+		// var desc2 = 'Find the average wingspan of birds in the forest!';
+ 		// var desc3 = 'Find the average thickness of the arctic ice sheets!';
 
 		// Project( name, funding, population, recommendedRep )
-		var p1 =new Project('Diamond Mine', desc1, 10000, pop1, env1, 20);
-		var p2 = new Project('Tropics', desc2, 20000, pop2, env1, 60);
-		var p3 = new Project('Arctic', desc3, 50000, pop3, env1, 100);
+		var p1 =new Project('Diamond Mine', 10000, pop1, env1, 20);
+		var p2 = new Project('Tropics', 20000, pop2, env1, 60);
+		var p3 = new Project('Arctic', 50000, pop3, env1, 100);
 
 
 		projects = [p1,p2,p3];

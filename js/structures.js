@@ -11,15 +11,30 @@ Environment.prototype = {
 }
 
 
-function Grant( recommendedRep, duration=30, maxFunding ) {
+function Grant( recommendedRep, maxFunding, duration=30 ) {
 	this.recommendedRep = recommendedRep;
-	this.maxFunding = maxFunding
-	this.duration = duration;
+	this.maxFunding = maxFunding;
+	this.startDate = new Date(game.date.toLocaleDateString());
+	this.propDeadline = this.generateDeadline(duration);			// deadline to submit a proposal
+	console.log('New grant generated.\nStart date set to ' + this.startDate.toLocaleDateString() +
+		'\nProposal deadline set to ' + this.propDeadline.toLocaleDateString());
 }
 
 Grant.prototype = {
-	constructor: Grant,
-	generateDeadline: function() {
+	constructor: Grant,	
+
+	generateDeadline: function( duration ) {
+		var deadline = new Date(this.startDate.toDateString());
+		deadline.setTime(deadline.getTime() + (duration * 24 * 60 * 60 * 1000));
+		return deadline;
+	},
+
+	generateProject: function() {
+	/* Generates a project with funding amount and a deadline. Funding generated 
+	 * based on the recommended reputation of the project and the reputation of
+	 * the player.
+	 */
+
 		return
 	},
 }
@@ -48,23 +63,27 @@ Population.prototype = {
 }
 
 
-function Project( title, description, funding, population, environment, repMultiplier ) {
-	this.title = title;
-	this.description = description;
+function Project( title, funding, population, environment, repMultiplier, duration=30 ) {
 	this.fundingAward = funding;
 	this.population = population;
 	this.environment = environment;
 	this.repMultiplier = repMultiplier;
+	this.title = title;
 	
 	// reputation award 
 }
 
 Project.prototype = {
-	apply:function () {
-		// determines whether the function is valid
-		// jStat.normal.sample(,)
-		return True;
-	},
+	constructor: Project,
+
+	calcReqFunding: function() {
+	/* Calculates the minimum funding requirement based on expercted number of
+	 * required samples for a positive reputation result and the cost to process 
+	 * each sample.
+	 */
+
+	 	return
+	}
 }
 
 

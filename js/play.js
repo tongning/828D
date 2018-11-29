@@ -41,6 +41,9 @@ var playState = {
         dials3 = ["Your current mean is: ", "The actual mean is: ", "Now, go back to the lab! ", ""]
 
         this.dials = [dials1, dials2, dials3];
+
+        // grant creation test code
+        new Grant(14, 20000);
     },
 
 
@@ -231,7 +234,6 @@ var playState = {
         var samplesText = '';
         for (var i = 0; i < numShown; i++) {
             samplesText += String(this.measurementList[listLen-i-1]) + this.sampleUnits + '\n';
-
         }
         return samplesText
     },
