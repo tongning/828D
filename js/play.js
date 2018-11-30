@@ -33,14 +33,12 @@ var playState = {
 
         this.phase = 0;
         this.texts = [];
-        dials1 = ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of samples.", "Can you go collect some samples for me?", "Collect enough samples so that you can know your mean for sure!", ""];
 
-        dials2 = ["Your current mean is: ", "The actual mean is: ", "As you can see there is a disparity in two values.", "In order to assess the mean of the data, you have to \ncollect a fair number of data to be confident of mean.", 
-             "I want to assess the mean again. Collect more samples for me!", ""];
 
-        dials3 = ["Your current mean is: ", "The actual mean is: ", "Now, go back to the lab! ", ""]
-
-        this.dials = [dials1, dials2, dials3];
+        this.dials = {0: {0: ["Hi, welcome to PI simulator. I am your PI", "We are, right now, studying the distribution of samples.", "Can you go collect some samples for me?", "Collect enough samples so that you can know your mean for sure!", ""], 
+                    2:["Your current mean is: ", "The actual mean is: ", "As you can see there is a disparity in two values.", "In order to assess the mean of the data, you have to \ncollect a fair number of data to be confident of mean.", 
+                            "I want to assess the mean again. Collect more samples for me!", ""], 
+                    4: ["Your current mean is: ", "The actual mean is: ", "Now, go back to the lab! ", ""]  } };
 
         // grant creation test code
         new Grant(14, 20000);
@@ -250,13 +248,6 @@ var playState = {
     },
 
 
-
-
-
-
-
-
-
     initDialogueState: function() {
         this.dialogueState = {
             tween: null,
@@ -289,11 +280,13 @@ var playState = {
 
 
     openPopupDialogue: function (newPopupTextString) {
+        
         var dialogueState = this.dialogueState;
         if ((dialogueState.tween !== null && dialogueState.tween.isRunning) 
         || dialogueState.popup.scale.x === 1) {
             return;
         }
+        
         dialogueState.popup.position.x = game.camera.x + (game.width / 2);
         dialogueState.popup.position.y = game.camera.y + (game.height / 2);
 
@@ -306,8 +299,8 @@ var playState = {
         dialogueState.popupText.visible = true;
         //  Create a tween that will pop-open the Dialogue, but only if it's not already tweening or open
         dialogueState.tween = game.add.tween(dialogueState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
-        dialogueState.isPopupOpen = true;
-    
+        dialogueState.isPopupOpen = true; 
+        
     },
 
 
@@ -322,6 +315,9 @@ var playState = {
         dialogueState.isPopupOpen = false;
     },
 
+    loadDialogue: function(questNum, phaseNum){
+        this.texts = this.dials[questNum][phaseNum]        
+    },
 
     processDialogue: function(){
         this.closePopupDialogue();
@@ -332,17 +328,20 @@ var playState = {
 
 
         this.dialogueState.popupText = game.add.text(game.camera.width / 2, game.camera.height / 2, newTxt,this.dialogueState.style);
-        this.dialogueState.popupText.x = Math.floor(this.dialogueState.popup.x + this.dialogueState.popup.width / 2);
-        this.dialogueState.popupText.y = Math.floor(this.dialogueState.popup.y + this.dialogueState.popup.height / 2);
+        
+        this.dialogueState.popupText.x = Math.floor(this.dialogueState.popup.x );
+        this.dialogueState.popupText.y = Math.floor(this.dialogueState.popup.y * 1.8);
         this.dialogueState.popupText.anchor.set(0.5)
 
-        this.openPopupDialogue();
+        //this.openPopupDialogue();
     },
 
 
     progDialogue: function (player, sample){
+        // Provide me with a questNum!
+        questNum = 0;
         if (this.phase == 0) {
-            this.texts = this.dials.shift();  // NEED TO FIX; change to load dialogue
+            this.loadDialogue(questNum, this.phase)        
             this.phase = this.phase + 1;
 
         }
@@ -354,7 +353,7 @@ var playState = {
                 game.paused = false;
                 this.genSamples(20);
                 this.phase = this.phase + 1;
-                this.texts = this.dials.shift(); // NEED TO FIX
+                this.loadDialogue(questNum, this.phase) 
             }
         }
         if (this.phase == 2){
@@ -362,10 +361,9 @@ var playState = {
             if(this.measurementList.length >= 5){
 
                 // preprocess the dialogues
-                //tx0 = "asd";
+                console.log(this.texts)
                 tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
                 this.texts[0] = tx0;
-                //tx1 = "asdsaasda";
                 tx1 = this.texts[1] + this.populationMean.toString();
                 this.texts[1] = tx1;
                 this.phase = this.phase + 1 
@@ -383,7 +381,7 @@ var playState = {
                 if(this.texts.length == 0){
                     game.paused = false;
                     this.phase = this.phase + 1;
-                    this.texts =this.dials.shift();// NEED TO FIX
+                    this.loadDialogue(questNum, this.phase) 
                     this.measurementList = []
                 }
             }
@@ -394,7 +392,6 @@ var playState = {
             if(this.measurementList.length >= 5){
 
                 // preprocess the dialogues
-                //tx0 = "asd";
                 tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
                 this.texts[0] = tx0;
                 //tx1 = "asdsaasda";
@@ -404,7 +401,6 @@ var playState = {
                 deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.measurementList) - this.populationMean)/this.populationStdv    )  )
                 game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
                 console.log("reputation gained: " +  deltaReputation)
-                //tx2 = this.texts[2] //+ deltaReputation.toString();
 
                 this.phase = this.phase + 1 
                 
@@ -422,7 +418,6 @@ var playState = {
                 if(this.texts.length == 0){
                     game.paused = false;
                     this.phase = this.phase + 1;
-                    this.texts =this.dials.shift();// NEED TO FIX
 
                 }
             }
