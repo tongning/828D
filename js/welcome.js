@@ -45,6 +45,7 @@ var welcomeState = {
 	loadSprites: function() {
 		game.load.spritesheet('talking-head', 'assets/sprites/talking-head.png', 255, 330);
 		game.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', 193, 71);
+		game.load.spritesheet('grants-missions-toggle', 'assets/sprites/grants-missions-button.png', 193, 71);
 		game.load.spritesheet('home-button', 'assets/buttons/home.png',0);
 		game.load.spritesheet('settings-cog', 'assets/buttons/settings.png',0);
 		game.load.image('background', 'assets/images/empty_background.jpg');

@@ -16,6 +16,7 @@ var menuState = {
 		this.addMenuTitle();
 		this.addMenuOptions();
 		this.addQuote(150, 550);
+		this.addGrantMissionToggleButton();
 		
 		var repPercent = 100 * game.totalReputation / game.maxReputation;
 		this.addHealthBar(150, 500, "Reputation", repPercent);
@@ -25,6 +26,24 @@ var menuState = {
 
 	},
 
+	addGrantMissionToggleButton: function() {
+		this.grantsMissionsButton = game.add.button(800, 30, 'grants-missions-toggle', this.toggleGrantsMissions, this, 2, 2, 2);
+		this.grantsMissionsToggleState = 'grants';
+	},
+
+	toggleGrantsMissions: function() {
+		if (this.grantsMissionsToggleState === 'grants') {
+			this.grantsMissionsToggleState = 'missions';
+			this.grantsMissionsButton.setFrames(1,1,1);
+			console.log(this.grantsMissionsButton);
+			console.log("Toggled to missions");
+		} else {
+			this.grantsMissionsToggleState = 'grants';
+			this.grantsMissionsButton.setFrames(2,2,2);
+			console.log("Toggled to grants");
+		}
+		
+	},
 
 	update: function() {
 		game.date.setTime(game.date.getTime() + (game.time.elapsed * 60));
