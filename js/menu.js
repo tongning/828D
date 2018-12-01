@@ -11,6 +11,19 @@ var menuState = {
 		game.projectsOngoing = this.generateProjects(3);
 	},
 
+	generatePerformanceSummary: function(levelResult) {
+		var popMean = levelResult.popMean;
+		var sampleMean = levelResult.sampleMean;
+		var popStDev = levelResult.popStDev;
+		var repChange = levelResult.reputationChange;
+		var summary = 
+		"Mission complete! Here's how you did: The population mean was "+popMean.toFixed(2)+" with "+
+		"a standard devation of "+popStDev.toFixed(2)+". The mean of your sample was "+
+		sampleMean.toFixed(2)+". Based on your performance, you've received a reputation change"+
+		" of "+(repChange < 0 ? "" : "+")+repChange.toFixed(2)+"%!\n"+
+		"~Press ESC to close~";
+		return summary;
+	},
 
 	create: function() {
 		var backgroundImage = game.add.sprite(0, 0, 'menu-bg');
@@ -28,6 +41,19 @@ var menuState = {
 		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
 		this.initPopupState();
+
+		if (game.hasOwnProperty('levelResult')) {
+			var performanceSummary = this.generatePerformanceSummary(game.levelResult);
+			this.openPopupWindow(performanceSummary);
+			delete game['levelResult'];
+		}
+		/*
+		game.levelResult = {
+            popMean: this.populationMean,
+            popStDev: this.populationStdv,
+            sampleMean: jStat.mean(this.measurementList),
+            reputationChange: deltaReputation
+        }*/
 	},
 
 	addGrantMissionToggleButton: function() {
@@ -86,7 +112,7 @@ var menuState = {
         popup.scale.set(0.0);
         this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
         this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
-        this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        this.style = { font: "25px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
         this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE sample\nSize: 2mm\nPress ESC to continue", style);
         this.popupState.popupText.anchor.set(0.5);
         this.popupState.popupText.visible = false;
