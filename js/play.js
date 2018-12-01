@@ -45,43 +45,6 @@ var playState = {
         new Grant(14, 20000);
     },
 
-    initConfidenceInterval: function() {
-        this.confidenceIntervalTitle = 
-        game.add.text(1150, 600, "95% Confidence Interval:", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.confidenceIntervalTitle.anchor.setTo(0.5, 0.5);
-        this.confidenceIntervalTitle.fixedToCamera = true;
-
-        this.confidenceIntervalText = 
-        game.add.text(1150, 625, "[Not yet available]", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.confidenceIntervalText.anchor.setTo(0.5, 0.5);
-        this.confidenceIntervalText.fixedToCamera = true;
-
-        this.meanText = 
-        game.add.text(1150, 650, "Sample mean: [N/A]", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.meanText.anchor.setTo(0.5, 0.5);
-        this.meanText.fixedToCamera = true;
-
-        this.stDevText = 
-        game.add.text(1150, 675, "Sample StDev: [N/A]", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.stDevText.anchor.setTo(0.5, 0.5);
-        this.stDevText.fixedToCamera = true;
-    },
 
     update: function () {
         //game.physics.arcade.collide(player, layer);
@@ -116,25 +79,13 @@ var playState = {
         this.samplesText.setText(this.genSamplesText());
     },
 
-    roundToXDigits: function(value, digits) {
-        if(!digits){
-            digits = 2;
-        }
-        value = value * Math.pow(10, digits);
-        value = Math.round(value);
-        value = value / Math.pow(10, digits);
-        return value;
-    },
 
-    computeConfidenceInterval: function() {
-        var mean = jStat.mean(this.measurementList);
-        var confInt = jStat.tci(mean, 0.05, this.measurementList);
-        confInt[0] = this.roundToXDigits(confInt[0],2)
-        confInt[1] = this.roundToXDigits(confInt[1],2)
-        return confInt;
-        //console.log(this.measurementList);
-        //console.log(confInt);
-    },
+
+
+
+
+
+/* BEGIN EXPLICITLY CALLED FUNCTIONS HERE */
 
     initWorld: function() {
         this.initMap();
@@ -264,6 +215,7 @@ var playState = {
         this.samplesText.anchor.setTo(1, 0);
         this.samplesText.fixedToCamera = true;
     },
+    
 
     initKeyMapping: function() {
         this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -275,6 +227,7 @@ var playState = {
         this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     },
+
 
     genSamplesText: function( maxShown=5 ) {
         var listLen = this.measurementList.length;
@@ -307,6 +260,121 @@ var playState = {
         console.log("Settings button was clicked");
     },
 
+
+    initConfidenceInterval: function() {
+        this.confidenceIntervalTitle = 
+        game.add.text(1150, 600, "95% Confidence Interval:", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.confidenceIntervalTitle.anchor.setTo(0.5, 0.5);
+        this.confidenceIntervalTitle.fixedToCamera = true;
+
+        this.confidenceIntervalText = 
+        game.add.text(1150, 625, "[Not yet available]", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.confidenceIntervalText.anchor.setTo(0.5, 0.5);
+        this.confidenceIntervalText.fixedToCamera = true;
+
+        this.meanText = 
+        game.add.text(1150, 650, "Sample mean: [N/A]", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.meanText.anchor.setTo(0.5, 0.5);
+        this.meanText.fixedToCamera = true;
+
+        this.stDevText = 
+        game.add.text(1150, 675, "Sample StDev: [N/A]", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.stDevText.anchor.setTo(0.5, 0.5);
+        this.stDevText.fixedToCamera = true;
+    },
+
+
+    roundToXDigits: function(value, digits) {
+        if(!digits){
+            digits = 2;
+        }
+        value = value * Math.pow(10, digits);
+        value = Math.round(value);
+        value = value / Math.pow(10, digits);
+        return value;
+    },
+
+    computeConfidenceInterval: function() {
+        var mean = jStat.mean(this.measurementList);
+        var confInt = jStat.tci(mean, 0.05, this.measurementList);
+        confInt[0] = this.roundToXDigits(confInt[0],2)
+        confInt[1] = this.roundToXDigits(confInt[1],2)
+        return confInt;
+        //console.log(this.measurementList);
+        //console.log(confInt);
+    },
+
+
+    genSamples: function(totSamples) {
+        // create samples.
+        for (var i = 0; i < totSamples; i++) {
+            locX = game.width * Math.random();
+            locY = game.height * Math.random();
+            var sample = this.samples.create(locX , locY, 'sample');
+        }
+    },
+
+
+    collectSample: function (player, sample) {
+        if (game.totalFunding > this.processCost) {
+            game.totalFunding -= this.processCost;
+            this.roundSpend += this.processCost;
+            sample.kill();
+            sampleValue = this.genDataValue();
+            this.measurementList.push(sampleValue)
+            this.scoreText = 'Score: ' + this.measurementList.toString();
+            // this.openPopupWindow(this.genPopupText(sampleValue));
+            if (this.measurementList.length > 4) {
+                var confInt = this.computeConfidenceInterval();
+                var width = confInt[1] - confInt[0];
+                this.confidenceIntervalText.setText(confInt.toString()+" - Width: "+width.toFixed(2));
+            }
+            if (this.measurementList.length > 2) {
+                var mean = jStat.mean(this.measurementList);
+                var stDev = jStat.stdev(this.measurementList,true);
+                this.meanText.setText("Sample Mean: "+mean.toFixed(2));
+                this.stDevText.setText("Sample StDev: "+stDev.toFixed(2));
+            }
+            
+            this.genSamples(1); // replenishing samples. 
+
+        } else {
+            console.log('Insufficient funding!');
+        }
+    },
+
+
+    genDataValue: function() {
+        var val = jStat.normal.sample(this.populationMean,this.populationStdv);
+        return Math.round(val * 100) / 100;
+    },
+
+
+    genPopupText: function(dataValue) {
+        return "You found a\nBLUE " + this.sampleKey + "\nSize: "+dataValue+"mm\nPress ESC to continue"
+    },
+
+
+
+
+
+/* BEGIN DIALOGUE CODE HERE */
 
     initDialogueState: function() {
         this.dialogueState = {
@@ -482,50 +550,4 @@ var playState = {
         }
     },
 
-    genPopupText: function(dataValue) {
-        return "You found a\nBLUE " + this.sampleKey + "\nSize: "+dataValue+"mm\nPress ESC to continue"
-    },
-
-
-    genDataValue: function() {
-        var val = jStat.normal.sample(this.populationMean,this.populationStdv);
-        return Math.round(val * 100) / 100;
-    },
-
-    genSamples: function(totSamples) {
-        // create samples.
-        for (var i = 0; i < totSamples; i++) {
-            locX = game.width * Math.random();
-            locY = game.height * Math.random();
-            var sample = this.samples.create(locX , locY, 'sample');
-        }
-    },
-
-    collectSample: function (player, sample) {
-        if (game.totalFunding > this.processCost) {
-            game.totalFunding -= this.processCost;
-            this.roundSpend += this.processCost;
-            sample.kill();
-            sampleValue = this.genDataValue();
-            this.measurementList.push(sampleValue)
-            this.scoreText = 'Score: ' + this.measurementList.toString();
-            // this.openPopupWindow(this.genPopupText(sampleValue));
-            if (this.measurementList.length > 4) {
-                var confInt = this.computeConfidenceInterval();
-                var width = confInt[1] - confInt[0];
-                this.confidenceIntervalText.setText(confInt.toString()+" - Width: "+width.toFixed(2));
-            }
-            if (this.measurementList.length > 2) {
-                var mean = jStat.mean(this.measurementList);
-                var stDev = jStat.stdev(this.measurementList,true);
-                this.meanText.setText("Sample Mean: "+mean.toFixed(2));
-                this.stDevText.setText("Sample StDev: "+stDev.toFixed(2));
-            }
-            
-            this.genSamples(1); // replenishing samples. 
-
-        } else {
-            console.log('Insufficient funding!');
-        }
-    },
 };

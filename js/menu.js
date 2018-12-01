@@ -11,19 +11,6 @@ var menuState = {
 		game.projectsOngoing = this.generateProjects(3);
 	},
 
-	generatePerformanceSummary: function(levelResult) {
-		var popMean = levelResult.popMean;
-		var sampleMean = levelResult.sampleMean;
-		var popStDev = levelResult.popStDev;
-		var repChange = levelResult.reputationChange;
-		var summary = 
-		"Mission complete! Here's how you did: The population mean was "+popMean.toFixed(2)+" with "+
-		"a standard devation of "+popStDev.toFixed(2)+". The mean of your sample was "+
-		sampleMean.toFixed(2)+". Based on your performance, you've received a reputation change"+
-		" of "+(repChange < 0 ? "" : "+")+repChange.toFixed(2)+"%!\n"+
-		"~Press ESC to close~";
-		return summary;
-	},
 
 	create: function() {
 		var backgroundImage = game.add.sprite(0, 0, 'menu-bg');
@@ -31,8 +18,9 @@ var menuState = {
 		backgroundImage.height = game.height;
 
 		this.addTalkingHead();
-		this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 		this.addQuote(150, 550);
+
+		this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 		this.addGrantMissionToggleButton();
 		
 		var repPercent = 100 * game.totalReputation / game.maxReputation;
@@ -56,31 +44,6 @@ var menuState = {
         }*/
 	},
 
-	addGrantMissionToggleButton: function() {
-		this.grantsMissionsButton = game.add.button(800, 30, 'grants-missions-toggle', this.toggleGrantsMissions, this, 2, 2, 2);
-		this.currentOptionState = this.optionStateEnum.MISSIONS;
-	},
-
-	toggleGrantsMissions: function() {
-		if (this.currentOptionState === this.optionStateEnum.GRANTS) {
-			this.currentOptionState = this.optionStateEnum.MISSIONS;
-			this.grantsMissionsButton.setFrames(2,2,2);
-			this.menuGroup.removeAll(/* Destroy */true, /* Silent */false, /* destroyTexture */false);
-			this.optionCount = 1;
-			this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
-			console.log(this.grantsMissionsButton);
-			console.log("Toggled to missions");
-			//this.openPopupWindow("sadfsd");
-		} else {
-			this.currentOptionState = this.optionStateEnum.GRANTS;
-			this.grantsMissionsButton.setFrames(1,1,1);
-			console.log("Toggled to grants");
-			this.menuGroup.removeAll(/* Destroy */true, /* Silent */false, /* destroyTexture */false);
-			this.optionCount = 1;
-			this.addMenuTitleAndOptions(this.optionStateEnum.GRANTS);
-			console.log("Called removeall");
-		}
-	},
 
 	update: function() {
 		game.date.setTime(game.date.getTime() + (game.time.elapsed * 60));
@@ -91,6 +54,13 @@ var menuState = {
 	    game.debug.text(game.date.toDateString(), 32, 32);
 	    game.debug.text(game.date.toLocaleTimeString(), 32, 48);
 	},
+
+
+
+
+
+
+/* BEGIN EXPLICITLY CALLED FUNCTIONS HERE */
 
 	initPopupState: function() {
         this.popupState = {
@@ -155,6 +125,7 @@ var menuState = {
         popupState.isPopupOpen = false;
     },
 
+
 	addQuote: function(quoteX, quoteY) {
 		var quoteText = game.add.text(
 			quoteX,
@@ -163,6 +134,46 @@ var menuState = {
 			style.quote.default);
 	},
 
+
+	generatePerformanceSummary: function(levelResult) {
+		var popMean = levelResult.popMean;
+		var sampleMean = levelResult.sampleMean;
+		var popStDev = levelResult.popStDev;
+		var repChange = levelResult.reputationChange;
+		var summary = 
+		"Mission complete! Here's how you did: The population mean was "+popMean.toFixed(2)+" with "+
+		"a standard devation of "+popStDev.toFixed(2)+". The mean of your sample was "+
+		sampleMean.toFixed(2)+". Based on your performance, you've received a reputation change"+
+		" of "+(repChange < 0 ? "" : "+")+repChange.toFixed(2)+"%!\n"+
+		"~Press ESC to close~";
+		return summary;
+	},
+
+	addGrantMissionToggleButton: function() {
+		this.grantsMissionsButton = game.add.button(800, 30, 'grants-missions-toggle', this.toggleGrantsMissions, this, 2, 2, 2);
+		this.currentOptionState = this.optionStateEnum.MISSIONS;
+	},
+
+	toggleGrantsMissions: function() {
+		if (this.currentOptionState === this.optionStateEnum.GRANTS) {
+			this.currentOptionState = this.optionStateEnum.MISSIONS;
+			this.grantsMissionsButton.setFrames(2,2,2);
+			this.menuGroup.removeAll(/* Destroy */true, /* Silent */false, /* destroyTexture */false);
+			this.optionCount = 1;
+			this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
+			console.log(this.grantsMissionsButton);
+			console.log("Toggled to missions");
+			//this.openPopupWindow("sadfsd");
+		} else {
+			this.currentOptionState = this.optionStateEnum.GRANTS;
+			this.grantsMissionsButton.setFrames(1,1,1);
+			console.log("Toggled to grants");
+			this.menuGroup.removeAll(/* Destroy */true, /* Silent */false, /* destroyTexture */false);
+			this.optionCount = 1;
+			this.addMenuTitleAndOptions(this.optionStateEnum.GRANTS);
+			console.log("Called removeall");
+		}
+	},
 
 	addMenuTitleAndOptions: function (grantsOrMissions) {
 		this.menuGroup = game.add.group();
@@ -187,6 +198,7 @@ var menuState = {
 		// the menu options
 		this.initPopupState();
 	},
+
 
 	addMenuOption: function( project ) {
 		this.showMenuOption(project.title, project.description + "\nFunding: " 
@@ -276,5 +288,7 @@ var menuState = {
 		projects = [p1,p2,p3];
 		return projects;
 	},
+
+
 
 };
