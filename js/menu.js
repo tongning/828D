@@ -18,8 +18,9 @@ var menuState = {
 		backgroundImage.height = game.height;
 
 		this.addTalkingHead();
-		this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 		this.addQuote(150, 550);
+
+		this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 		this.addGrantMissionToggleButton();
 		
 		var repPercent = 100 * game.totalReputation / game.maxReputation;
@@ -27,7 +28,125 @@ var menuState = {
 		var fundingPercent = 100 * game.totalFunding / game.maxFunding;
 		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
+		this.initPopupState();
 
+		if (game.hasOwnProperty('levelResult')) {
+			var performanceSummary = this.generatePerformanceSummary(game.levelResult);
+			this.openPopupWindow(performanceSummary);
+			delete game['levelResult'];
+		}
+		/*
+		game.levelResult = {
+            popMean: this.populationMean,
+            popStDev: this.populationStdv,
+            sampleMean: jStat.mean(this.measurementList),
+            reputationChange: deltaReputation
+        }*/
+	},
+
+
+	update: function() {
+		game.date.setTime(game.date.getTime() + (game.time.elapsed * 60));
+	},
+
+
+	render: function() {
+	    game.debug.text(game.date.toDateString(), 32, 32);
+	    game.debug.text(game.date.toLocaleTimeString(), 32, 48);
+	},
+
+
+
+
+
+
+/* BEGIN EXPLICITLY CALLED FUNCTIONS HERE */
+
+	initPopupState: function() {
+        this.popupState = {
+            tween: null,
+            popup: null,
+            popupText: null,
+            isPopupOpen: false,
+            closePopupKey: null,
+            style: null,
+            spsp: null
+        }
+        
+        this.popupState.popup = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'background');
+        var popup = this.popupState.popup;
+        popup.alpha = 0.8;
+        popup.anchor.set(0.5);
+        popup.inputEnabled = true;
+        popup.input.enableDrag();
+        popup.scale.set(0.0);
+        this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
+        this.style = { font: "25px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE sample\nSize: 2mm\nPress ESC to continue", style);
+        this.popupState.popupText.anchor.set(0.5);
+        this.popupState.popupText.visible = false;
+
+        //this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        //this.popupState.spsp.onDown.add(this.progDialogue, this);
+	},
+	
+	openPopupWindow: function (newPopupTextString) {
+        var popupState = this.popupState;
+        if ((popupState.tween !== null && popupState.tween.isRunning) 
+        || popupState.popup.scale.x === 1) {
+            return;
+        }
+        popupState.popup.position.x = game.camera.x + (game.width / 2);
+        popupState.popup.position.y = game.camera.y + (game.height / 2);
+
+        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
+        popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
+        popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
+        popupState.popupText.anchor.set(0.5)
+        
+        popupState.popupText.visible = true;
+        //  Create a tween that will pop-open the window, but only if it's not already tweening or open
+        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
+        popupState.isPopupOpen = true;
+        
+    },
+
+
+    closePopupWindow: function() {
+        var popupState = this.popupState;
+        if (popupState.tween && popupState.tween.isRunning || popupState.popup.scale.x === 0.1) {
+            return;
+        }
+        popupState.popupText.visible = false;
+        //  Create a tween that will close the window, but only if it's not already tweening or closed
+        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
+        popupState.isPopupOpen = false;
+    },
+
+
+	addQuote: function(quoteX, quoteY) {
+		var quoteText = game.add.text(
+			quoteX,
+			quoteY,
+			"\"Keep it up! Collect high quality data to improve\nour reputation.\"", 
+			style.quote.default);
+	},
+
+
+	generatePerformanceSummary: function(levelResult) {
+		var popMean = levelResult.popMean;
+		var sampleMean = levelResult.sampleMean;
+		var popStDev = levelResult.popStDev;
+		var repChange = levelResult.reputationChange;
+		var summary = 
+		"Mission complete! Here's how you did: The population mean was "+popMean.toFixed(2)+" with "+
+		"a standard devation of "+popStDev.toFixed(2)+". The mean of your sample was "+
+		sampleMean.toFixed(2)+". Based on your performance, you've received a reputation change"+
+		" of "+(repChange < 0 ? "" : "+")+repChange.toFixed(2)+"%!\n"+
+		"~Press ESC to close~";
+		return summary;
 	},
 
 	addGrantMissionToggleButton: function() {
@@ -44,6 +163,7 @@ var menuState = {
 			this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 			console.log(this.grantsMissionsButton);
 			console.log("Toggled to missions");
+			//this.openPopupWindow("sadfsd");
 		} else {
 			this.currentOptionState = this.optionStateEnum.GRANTS;
 			this.grantsMissionsButton.setFrames(1,1,1);
@@ -54,26 +174,6 @@ var menuState = {
 			console.log("Called removeall");
 		}
 	},
-
-	update: function() {
-		game.date.setTime(game.date.getTime() + (game.time.elapsed * 60));
-	},
-
-
-	render: function() {
-	    game.debug.text(game.date.toDateString(), 32, 32);
-	    game.debug.text(game.date.toLocaleTimeString(), 32, 48);
-	},
-
-
-	addQuote: function(quoteX, quoteY) {
-		var quoteText = game.add.text(
-			quoteX,
-			quoteY,
-			"\"Keep it up! Collect high quality data to improve\nour reputation.\"", 
-			style.quote.default);
-	},
-
 
 	addMenuTitleAndOptions: function (grantsOrMissions) {
 		this.menuGroup = game.add.group();
@@ -94,7 +194,11 @@ var menuState = {
 			}
 		}
 		this.menuGroup.add(titleText);
+		// We initialize the popup again so that the popups are drawn on top of
+		// the menu options
+		this.initPopupState();
 	},
+
 
 	addMenuOption: function( project ) {
 		this.showMenuOption(project.title, project.description + "\nFunding: " 
@@ -184,5 +288,7 @@ var menuState = {
 		projects = [p1,p2,p3];
 		return projects;
 	},
+
+
 
 };

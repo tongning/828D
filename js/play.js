@@ -72,62 +72,23 @@ var playState = {
         new Grant(14, 20000);
     },
 
-    initConfidenceInterval: function() {
-        this.confidenceIntervalTitle = 
-        game.add.text(1150, 600, "95% Confidence Interval:", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.confidenceIntervalTitle.anchor.setTo(0.5, 0.5);
-        this.confidenceIntervalTitle.fixedToCamera = true;
 
-        this.confidenceIntervalText = 
-        game.add.text(1150, 625, "[Not yet available]", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.confidenceIntervalText.anchor.setTo(0.5, 0.5);
-        this.confidenceIntervalText.fixedToCamera = true;
-
-        this.meanText = 
-        game.add.text(1150, 650, "Sample mean: [N/A]", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.meanText.anchor.setTo(0.5, 0.5);
-        this.meanText.fixedToCamera = true;
-
-        this.stDevText = 
-        game.add.text(1150, 675, "Sample StDev: [N/A]", {
-            font: '20px Arial',
-            fill: '000000',
-            align: 'right',
-        });
-        this.stDevText.anchor.setTo(0.5, 0.5);
-        this.stDevText.fixedToCamera = true;
-    },
-
-    update: function() {
+    update: function () {
         //game.physics.arcade.collide(player, layer);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
-        
-        if (!this.popupState.isPopupOpen) {
-            if (this.leftKey.isDown || this.aKey.isDown) {
-                this.player.body.velocity.x -= this.playerSpeed;
-            }
-            if (this.rightKey.isDown || this.dKey.isDown) {
-                this.player.body.velocity.x += this.playerSpeed;
-            } 
-            if (this.upKey.isDown || this.wKey.isDown) {
-                this.player.body.velocity.y -= this.playerSpeed;
-            } 
-            if (this.downKey.isDown || this.sKey.isDown) {
-                this.player.body.velocity.y += this.playerSpeed;
-            }
+
+        if (this.leftKey.isDown || this.aKey.isDown) {
+            this.player.body.velocity.x -= this.playerSpeed;
+        }
+        if (this.rightKey.isDown || this.dKey.isDown) {
+            this.player.body.velocity.x += this.playerSpeed;
+        }
+        if (this.upKey.isDown || this.wKey.isDown) {
+            this.player.body.velocity.y -= this.playerSpeed;
+        }
+        if (this.downKey.isDown || this.sKey.isDown) {
+            this.player.body.velocity.y += this.playerSpeed;
         }
 
         game.physics.arcade.overlap(this.player, this.samples, this.collectSample, null, this);
@@ -145,25 +106,13 @@ var playState = {
         this.samplesText.setText(this.genSamplesText());
     },
 
-    roundToXDigits: function(value, digits) {
-        if(!digits){
-            digits = 2;
-        }
-        value = value * Math.pow(10, digits);
-        value = Math.round(value);
-        value = value / Math.pow(10, digits);
-        return value;
-    },
 
-    computeConfidenceInterval: function() {
-        var mean = jStat.mean(this.measurementList);
-        var confInt = jStat.tci(mean, 0.05, this.measurementList);
-        confInt[0] = this.roundToXDigits(confInt[0],2)
-        confInt[1] = this.roundToXDigits(confInt[1],2)
-        return confInt;
-        //console.log(this.measurementList);
-        //console.log(confInt);
-    },
+
+
+
+
+
+/* BEGIN EXPLICITLY CALLED FUNCTIONS HERE */
 
     initWorld: function() {
         this.initMap();
@@ -173,7 +122,6 @@ var playState = {
 
 
     initMeta: function() {
-        this.initPopupState();
         this.initMenu();
         this.initStaticInfo();
         this.initDynamicInfo();
@@ -294,6 +242,7 @@ var playState = {
         this.samplesText.anchor.setTo(1, 0);
         this.samplesText.fixedToCamera = true;
     },
+    
 
     initKeyMapping: function() {
         this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -305,6 +254,7 @@ var playState = {
         this.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     },
+
 
     genSamplesText: function( maxShown=5 ) {
         var listLen = this.measurementList.length;
@@ -318,6 +268,16 @@ var playState = {
 
 
     onClickReturnButton: function() {
+        deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.measurementList) - this.populationMean)/this.populationStdv));
+        game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
+        
+        console.log("reputation gained: " +  deltaReputation)
+        game.levelResult = {
+            popMean: this.populationMean,
+            popStDev: this.populationStdv,
+            sampleMean: jStat.mean(this.measurementList),
+            reputationChange: deltaReputation
+        }
         game.state.start('menu');
         console.log("Return button was clicked");
     },
@@ -327,6 +287,121 @@ var playState = {
         console.log("Settings button was clicked");
     },
 
+
+    initConfidenceInterval: function() {
+        this.confidenceIntervalTitle = 
+        game.add.text(1150, 600, "95% Confidence Interval:", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.confidenceIntervalTitle.anchor.setTo(0.5, 0.5);
+        this.confidenceIntervalTitle.fixedToCamera = true;
+
+        this.confidenceIntervalText = 
+        game.add.text(1150, 625, "[Not yet available]", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.confidenceIntervalText.anchor.setTo(0.5, 0.5);
+        this.confidenceIntervalText.fixedToCamera = true;
+
+        this.meanText = 
+        game.add.text(1150, 650, "Sample mean: [N/A]", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.meanText.anchor.setTo(0.5, 0.5);
+        this.meanText.fixedToCamera = true;
+
+        this.stDevText = 
+        game.add.text(1150, 675, "Sample StDev: [N/A]", {
+            font: '20px Arial',
+            fill: '000000',
+            align: 'right',
+        });
+        this.stDevText.anchor.setTo(0.5, 0.5);
+        this.stDevText.fixedToCamera = true;
+    },
+
+
+    roundToXDigits: function(value, digits) {
+        if(!digits){
+            digits = 2;
+        }
+        value = value * Math.pow(10, digits);
+        value = Math.round(value);
+        value = value / Math.pow(10, digits);
+        return value;
+    },
+
+    computeConfidenceInterval: function() {
+        var mean = jStat.mean(this.measurementList);
+        var confInt = jStat.tci(mean, 0.05, this.measurementList);
+        confInt[0] = this.roundToXDigits(confInt[0],2)
+        confInt[1] = this.roundToXDigits(confInt[1],2)
+        return confInt;
+        //console.log(this.measurementList);
+        //console.log(confInt);
+    },
+
+
+    genSamples: function(totSamples) {
+        // create samples.
+        for (var i = 0; i < totSamples; i++) {
+            locX = game.width * Math.random();
+            locY = game.height * Math.random();
+            var sample = this.samples.create(locX , locY, 'sample');
+        }
+    },
+
+
+    collectSample: function (player, sample) {
+        if (game.totalFunding > this.processCost) {
+            game.totalFunding -= this.processCost;
+            this.roundSpend += this.processCost;
+            sample.kill();
+            sampleValue = this.genDataValue();
+            this.measurementList.push(sampleValue)
+            this.scoreText = 'Score: ' + this.measurementList.toString();
+            // this.openPopupWindow(this.genPopupText(sampleValue));
+            if (this.measurementList.length > 4) {
+                var confInt = this.computeConfidenceInterval();
+                var width = confInt[1] - confInt[0];
+                this.confidenceIntervalText.setText(confInt.toString()+" - Width: "+width.toFixed(2));
+            }
+            if (this.measurementList.length > 2) {
+                var mean = jStat.mean(this.measurementList);
+                var stDev = jStat.stdev(this.measurementList,true);
+                this.meanText.setText("Sample Mean: "+mean.toFixed(2));
+                this.stDevText.setText("Sample StDev: "+stDev.toFixed(2));
+            }
+            
+            this.genSamples(1); // replenishing samples. 
+
+        } else {
+            console.log('Insufficient funding!');
+        }
+    },
+
+
+    genDataValue: function() {
+        var val = jStat.normal.sample(this.populationMean,this.populationStdv);
+        return Math.round(val * 100) / 100;
+    },
+
+
+    genPopupText: function(dataValue) {
+        return "You found a\nBLUE " + this.sampleKey + "\nSize: "+dataValue+"mm\nPress ESC to continue"
+    },
+
+
+
+
+
+/* BEGIN DIALOGUE CODE HERE */
 
     initDialogueState: function() {
         this.dialogueState = {
@@ -623,6 +698,7 @@ var playState = {
                 this.closePopupDialogue();
                 if(this.measurementList.length >= 5){
 
+
                     // preprocess the dialogues
                     console.log(this.texts)
 
@@ -665,6 +741,18 @@ var playState = {
                     this.phase = this.phase + 1 
                     
                 }
+
+        if (this.phase == 4){
+            this.closePopupDialogue();
+            if(this.measurementList.length >= 5){
+                // preprocess the dialogues
+                tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
+                this.texts[0] = tx0;
+                //tx1 = "asdsaasda";
+                tx1 = this.texts[1] + this.populationMean.toString();
+                this.texts[1] = tx1;
+                this.phase = this.phase + 1 
+
                 
             }
 
@@ -838,115 +926,4 @@ var playState = {
         }
     },
 
-    initPopupState: function() {
-        this.popupState = {
-            tween: null,
-            popup: null,
-            popupText: null,
-            isPopupOpen: false,
-            closePopupKey: null,
-            style: null,
-            spsp: null
-        }
-        
-        this.popupState.popup = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'background');
-        var popup = this.popupState.popup;
-        popup.alpha = 0.8;
-        popup.anchor.set(0.5);
-        popup.inputEnabled = true;
-        popup.input.enableDrag();
-        popup.scale.set(0.0);
-        this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
-        this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
-        this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-        this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE sample\nSize: 2mm\nPress ESC to continue", style);
-        this.popupState.popupText.anchor.set(0.5);
-        this.popupState.popupText.visible = false;
-
-        this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.popupState.spsp.onDown.add(this.progDialogue, this);
-    },
-
-
-    genPopupText: function(dataValue) {
-        return "You found a\nBLUE " + this.sampleKey + "\nSize: "+dataValue+"mm\nPress ESC to continue"
-    },
-
-
-    genDataValue: function() {
-        var val = jStat.normal.sample(this.populationMean,this.populationStdv);
-        return Math.round(val * 100) / 100;
-    },
-
-
-    openPopupWindow: function (newPopupTextString) {
-        var popupState = this.popupState;
-        if ((popupState.tween !== null && popupState.tween.isRunning) 
-        || popupState.popup.scale.x === 1) {
-            return;
-        }
-        popupState.popup.position.x = game.camera.x + (game.width / 2);
-        popupState.popup.position.y = game.camera.y + (game.height / 2);
-
-        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-        popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
-        popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
-        popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
-        popupState.popupText.anchor.set(0.5)
-        
-        popupState.popupText.visible = true;
-        //  Create a tween that will pop-open the window, but only if it's not already tweening or open
-        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
-        popupState.isPopupOpen = true;
-        
-    },
-
-
-    closePopupWindow: function() {
-        var popupState = this.popupState;
-        if (popupState.tween && popupState.tween.isRunning || popupState.popup.scale.x === 0.1) {
-            return;
-        }
-        popupState.popupText.visible = false;
-        //  Create a tween that will close the window, but only if it's not already tweening or closed
-        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
-        popupState.isPopupOpen = false;
-    },
-
-    genSamples: function(totSamples) {
-        // create samples.
-        for (var i = 0; i < totSamples; i++) {
-            locX = game.width * Math.random();
-            locY = game.height * Math.random();
-            var sample = this.samples.create(locX , locY, 'sample');
-        }
-    },
-
-    collectSample: function (player, sample) {
-        if (game.totalFunding > this.processCost) {
-            game.totalFunding -= this.processCost;
-            this.roundSpend += this.processCost;
-            sample.kill();
-            sampleValue = this.genDataValue();
-            this.measurementList.push(sampleValue)
-            this.scoreText = 'Score: ' + this.measurementList.toString();
-            // this.openPopupWindow(this.genPopupText(sampleValue));
-            if (this.measurementList.length > 4) {
-                var confInt = this.computeConfidenceInterval();
-                var width = confInt[1] - confInt[0];
-                this.confidenceIntervalText.setText(confInt.toString()+" - Width: "+width.toFixed(2));
-            }
-            if (this.measurementList.length > 2) {
-                var mean = jStat.mean(this.measurementList);
-                var stDev = jStat.stdev(this.measurementList,true);
-                this.meanText.setText("Sample Mean: "+mean.toFixed(2));
-                this.stDevText.setText("Sample StDev: "+stDev.toFixed(2));
-            }
-            
-            this.genSamples(1); // replenishing samples. 
-
-        } else {
-            console.log('Insufficient funding!');
-        }
-    },
 };
