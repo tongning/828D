@@ -13,8 +13,7 @@ var menuState = {
 		backgroundImage.height = game.height;
 
 		this.addTalkingHead();
-		this.addMenuTitle();
-		this.addMenuOptions();
+		this.addMenuTitleAndOptions();
 		this.addQuote(150, 550);
 		this.addGrantMissionToggleButton();
 		
@@ -65,22 +64,17 @@ var menuState = {
 	},
 
 
-	addMenuTitle: function() {
+	addMenuTitleAndOptions: function() {
 		var titleText = game.add.text(
 			game.width - 500, 
 			100, 
 			"~Select a mission~", 
 			style.navitem.hover
 			);
+			for (i=0; i<game.projectsOngoing.length; i++) {
+				this.addMenuOption(game.projectsOngoing[i]);	
+			}
 	},
-
-
-	addMenuOptions: function() {
-		for (i=0; i<game.projectsOngoing.length; i++) {
-			this.addMenuOption(game.projectsOngoing[i]);	
-		}
-	},
-
 
 	addMenuOption: function( project ) {
 		this.showMenuOption(project.title, project.description + "\nFunding: " 
