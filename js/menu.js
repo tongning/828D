@@ -3,6 +3,11 @@ var menuState = {
 	preload: function() {
 		this.loadImages();
 		this.optionCount = 1;
+		this.optionStateEnum = {
+			GRANTS: 1,
+			MISSIONS: 2
+		};
+		this.currentOptionState = this.optionStateEnum.MISSIONS;
 		game.projectsOngoing = this.generateProjects(3);
 	},
 
@@ -13,7 +18,7 @@ var menuState = {
 		backgroundImage.height = game.height;
 
 		this.addTalkingHead();
-		this.addMenuTitleAndOptions();
+		this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 		this.addQuote(150, 550);
 		this.addGrantMissionToggleButton();
 		
@@ -27,21 +32,27 @@ var menuState = {
 
 	addGrantMissionToggleButton: function() {
 		this.grantsMissionsButton = game.add.button(800, 30, 'grants-missions-toggle', this.toggleGrantsMissions, this, 2, 2, 2);
-		this.grantsMissionsToggleState = 'grants';
+		this.currentOptionState = this.optionStateEnum.MISSIONS;
 	},
 
 	toggleGrantsMissions: function() {
-		if (this.grantsMissionsToggleState === 'grants') {
-			this.grantsMissionsToggleState = 'missions';
-			this.grantsMissionsButton.setFrames(1,1,1);
+		if (this.currentOptionState === this.optionStateEnum.GRANTS) {
+			this.currentOptionState = this.optionStateEnum.MISSIONS;
+			this.grantsMissionsButton.setFrames(2,2,2);
+			this.menuGroup.removeAll(/* Destroy */true, /* Silent */false, /* destroyTexture */false);
+			this.optionCount = 1;
+			this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 			console.log(this.grantsMissionsButton);
 			console.log("Toggled to missions");
 		} else {
-			this.grantsMissionsToggleState = 'grants';
-			this.grantsMissionsButton.setFrames(2,2,2);
+			this.currentOptionState = this.optionStateEnum.GRANTS;
+			this.grantsMissionsButton.setFrames(1,1,1);
 			console.log("Toggled to grants");
+			this.menuGroup.removeAll(/* Destroy */true, /* Silent */false, /* destroyTexture */false);
+			this.optionCount = 1;
+			this.addMenuTitleAndOptions(this.optionStateEnum.GRANTS);
+			console.log("Called removeall");
 		}
-		
 	},
 
 	update: function() {
@@ -64,16 +75,25 @@ var menuState = {
 	},
 
 
-	addMenuTitleAndOptions: function() {
+	addMenuTitleAndOptions: function (grantsOrMissions) {
+		this.menuGroup = game.add.group();
 		var titleText = game.add.text(
-			game.width - 500, 
-			100, 
-			"~Select a mission~", 
+			game.width - 500,
+			100,
+			grantsOrMissions === this.optionStateEnum.MISSIONS ?
+				"~Select a mission~" : "~Select a grant~",
 			style.navitem.hover
-			);
-			for (i=0; i<game.projectsOngoing.length; i++) {
-				this.addMenuOption(game.projectsOngoing[i]);	
+		);
+		if (grantsOrMissions === this.optionStateEnum.MISSIONS) {
+			for (i = 0; i < game.projectsOngoing.length; i++) {
+				this.addMenuOption(game.projectsOngoing[i]);
 			}
+		} else {
+			for (i = 0; i < game.grantsAvailable.length; i++) {
+				this.addMenuOption(game.grantsAvailable[i]);
+			}
+		}
+		this.menuGroup.add(titleText);
 	},
 
 	addMenuOption: function( project ) {
@@ -101,6 +121,8 @@ var menuState = {
 
 		var smallText = game.add.text(game.width - 500, (this.optionCount * menuOptionVSpace + titleSubtitleVSpace)+headPadding, details, style.navitem.subtitle);
 		this.optionCount ++;
+		this.menuGroup.add(bigText);
+		this.menuGroup.add(smallText);
 	},
 
 
