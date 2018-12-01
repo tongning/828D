@@ -27,7 +27,7 @@ var menuState = {
 		var fundingPercent = 100 * game.totalFunding / game.maxFunding;
 		this.addHealthBar(450, 500, "Funding", fundingPercent);
 
-
+		this.initPopupState();
 	},
 
 	addGrantMissionToggleButton: function() {
@@ -44,6 +44,7 @@ var menuState = {
 			this.addMenuTitleAndOptions(this.optionStateEnum.MISSIONS);
 			console.log(this.grantsMissionsButton);
 			console.log("Toggled to missions");
+			//this.openPopupWindow("sadfsd");
 		} else {
 			this.currentOptionState = this.optionStateEnum.GRANTS;
 			this.grantsMissionsButton.setFrames(1,1,1);
@@ -65,6 +66,68 @@ var menuState = {
 	    game.debug.text(game.date.toLocaleTimeString(), 32, 48);
 	},
 
+	initPopupState: function() {
+        this.popupState = {
+            tween: null,
+            popup: null,
+            popupText: null,
+            isPopupOpen: false,
+            closePopupKey: null,
+            style: null,
+            spsp: null
+        }
+        
+        this.popupState.popup = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'background');
+        var popup = this.popupState.popup;
+        popup.alpha = 0.8;
+        popup.anchor.set(0.5);
+        popup.inputEnabled = true;
+        popup.input.enableDrag();
+        popup.scale.set(0.0);
+        this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
+        this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE sample\nSize: 2mm\nPress ESC to continue", style);
+        this.popupState.popupText.anchor.set(0.5);
+        this.popupState.popupText.visible = false;
+
+        //this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        //this.popupState.spsp.onDown.add(this.progDialogue, this);
+	},
+	
+	openPopupWindow: function (newPopupTextString) {
+        var popupState = this.popupState;
+        if ((popupState.tween !== null && popupState.tween.isRunning) 
+        || popupState.popup.scale.x === 1) {
+            return;
+        }
+        popupState.popup.position.x = game.camera.x + (game.width / 2);
+        popupState.popup.position.y = game.camera.y + (game.height / 2);
+
+        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
+        popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
+        popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
+        popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
+        popupState.popupText.anchor.set(0.5)
+        
+        popupState.popupText.visible = true;
+        //  Create a tween that will pop-open the window, but only if it's not already tweening or open
+        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
+        popupState.isPopupOpen = true;
+        
+    },
+
+
+    closePopupWindow: function() {
+        var popupState = this.popupState;
+        if (popupState.tween && popupState.tween.isRunning || popupState.popup.scale.x === 0.1) {
+            return;
+        }
+        popupState.popupText.visible = false;
+        //  Create a tween that will close the window, but only if it's not already tweening or closed
+        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
+        popupState.isPopupOpen = false;
+    },
 
 	addQuote: function(quoteX, quoteY) {
 		var quoteText = game.add.text(
@@ -94,6 +157,9 @@ var menuState = {
 			}
 		}
 		this.menuGroup.add(titleText);
+		// We initialize the popup again so that the popups are drawn on top of
+		// the menu options
+		this.initPopupState();
 	},
 
 	addMenuOption: function( project ) {

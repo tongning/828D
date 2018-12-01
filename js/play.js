@@ -83,24 +83,22 @@ var playState = {
         this.stDevText.fixedToCamera = true;
     },
 
-    update: function() {
+    update: function () {
         //game.physics.arcade.collide(player, layer);
         this.player.body.velocity.x = 0;
         this.player.body.velocity.y = 0;
-        
-        if (!this.popupState.isPopupOpen) {
-            if (this.leftKey.isDown || this.aKey.isDown) {
-                this.player.body.velocity.x -= this.playerSpeed;
-            }
-            if (this.rightKey.isDown || this.dKey.isDown) {
-                this.player.body.velocity.x += this.playerSpeed;
-            } 
-            if (this.upKey.isDown || this.wKey.isDown) {
-                this.player.body.velocity.y -= this.playerSpeed;
-            } 
-            if (this.downKey.isDown || this.sKey.isDown) {
-                this.player.body.velocity.y += this.playerSpeed;
-            }
+
+        if (this.leftKey.isDown || this.aKey.isDown) {
+            this.player.body.velocity.x -= this.playerSpeed;
+        }
+        if (this.rightKey.isDown || this.dKey.isDown) {
+            this.player.body.velocity.x += this.playerSpeed;
+        }
+        if (this.upKey.isDown || this.wKey.isDown) {
+            this.player.body.velocity.y -= this.playerSpeed;
+        }
+        if (this.downKey.isDown || this.sKey.isDown) {
+            this.player.body.velocity.y += this.playerSpeed;
         }
 
         game.physics.arcade.overlap(this.player, this.samples, this.collectSample, null, this);
@@ -146,7 +144,6 @@ var playState = {
 
 
     initMeta: function() {
-        this.initPopupState();
         this.initMenu();
         this.initStaticInfo();
         this.initDynamicInfo();
@@ -291,6 +288,16 @@ var playState = {
 
 
     onClickReturnButton: function() {
+        deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.measurementList) - this.populationMean)/this.populationStdv));
+        game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
+        
+        console.log("reputation gained: " +  deltaReputation)
+        game.levelResult = {
+            popMean: this.populationMean,
+            popStDev: this.populationStdv,
+            sampleMean: jStat.mean(this.measurementList),
+            reputationChange: deltaReputation
+        }
         game.state.start('menu');
         console.log("Return button was clicked");
     },
@@ -443,18 +450,12 @@ var playState = {
         if (this.phase == 4){
             this.closePopupDialogue();
             if(this.measurementList.length >= 5){
-
                 // preprocess the dialogues
                 tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
                 this.texts[0] = tx0;
                 //tx1 = "asdsaasda";
                 tx1 = this.texts[1] + this.populationMean.toString();
                 this.texts[1] = tx1;
-
-                deltaReputation = 2 - Math.min(4, Math.abs(  (jStat.mean(this.measurementList) - this.populationMean)/this.populationStdv    )  )
-                game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
-                console.log("reputation gained: " +  deltaReputation)
-
                 this.phase = this.phase + 1 
                 
             }
@@ -481,36 +482,6 @@ var playState = {
         }
     },
 
-    initPopupState: function() {
-        this.popupState = {
-            tween: null,
-            popup: null,
-            popupText: null,
-            isPopupOpen: false,
-            closePopupKey: null,
-            style: null,
-            spsp: null
-        }
-        
-        this.popupState.popup = game.add.sprite(game.camera.width / 2, game.camera.height / 2, 'background');
-        var popup = this.popupState.popup;
-        popup.alpha = 0.8;
-        popup.anchor.set(0.5);
-        popup.inputEnabled = true;
-        popup.input.enableDrag();
-        popup.scale.set(0.0);
-        this.popupState.closePopupKey = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
-        this.popupState.closePopupKey.onDown.add(this.closePopupWindow, this);
-        this.style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-        this.popupState.popupText = game.add.text(0, 0, "You found a\nBLUE sample\nSize: 2mm\nPress ESC to continue", style);
-        this.popupState.popupText.anchor.set(0.5);
-        this.popupState.popupText.visible = false;
-
-        this.popupState.spsp = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.popupState.spsp.onDown.add(this.progDialogue, this);
-    },
-
-
     genPopupText: function(dataValue) {
         return "You found a\nBLUE " + this.sampleKey + "\nSize: "+dataValue+"mm\nPress ESC to continue"
     },
@@ -519,41 +490,6 @@ var playState = {
     genDataValue: function() {
         var val = jStat.normal.sample(this.populationMean,this.populationStdv);
         return Math.round(val * 100) / 100;
-    },
-
-
-    openPopupWindow: function (newPopupTextString) {
-        var popupState = this.popupState;
-        if ((popupState.tween !== null && popupState.tween.isRunning) 
-        || popupState.popup.scale.x === 1) {
-            return;
-        }
-        popupState.popup.position.x = game.camera.x + (game.width / 2);
-        popupState.popup.position.y = game.camera.y + (game.height / 2);
-
-        var style = { font: "32px Arial", fill: "#555555", wordWrap: true, wordWrapWidth: 500, align: "center", backgroundColor: "#ffff00" };
-        popupState.popupText = game.add.text(0, 0, newPopupTextString, style);
-        popupState.popupText.x = Math.floor(popupState.popup.x + popupState.popup.width / 2);
-        popupState.popupText.y = Math.floor(popupState.popup.y + popupState.popup.height / 2);
-        popupState.popupText.anchor.set(0.5)
-        
-        popupState.popupText.visible = true;
-        //  Create a tween that will pop-open the window, but only if it's not already tweening or open
-        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 1, y: 1 }, 1000, Phaser.Easing.Elastic.Out, true);
-        popupState.isPopupOpen = true;
-        
-    },
-
-
-    closePopupWindow: function() {
-        var popupState = this.popupState;
-        if (popupState.tween && popupState.tween.isRunning || popupState.popup.scale.x === 0.1) {
-            return;
-        }
-        popupState.popupText.visible = false;
-        //  Create a tween that will close the window, but only if it's not already tweening or closed
-        popupState.tween = game.add.tween(popupState.popup.scale).to({ x: 0.0, y: 0.0 }, 500, Phaser.Easing.Elastic.In, true);
-        popupState.isPopupOpen = false;
     },
 
     genSamples: function(totSamples) {
