@@ -924,6 +924,6 @@ var playState = {
                 this.closePopupDialogue();
             }            
         }
-    },
+    }
 
-};
+}}}
