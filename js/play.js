@@ -419,7 +419,7 @@ var playState = {
 
     progDialogue: function (player, sample){
         // Provide me with a questNum!
-        questNum = 4//Math.floor(Math.random() * 5);
+        questNum = Math.floor(Math.random() * 5);
 
         if (questNum == 0){
 
