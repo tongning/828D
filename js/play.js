@@ -738,22 +738,8 @@ var playState = {
                     game.totalReputation = Math.min(game.maxReputation, game.totalReputation + deltaReputation)
                     console.log("reputation gained: " +  deltaReputation)
 
-                    this.phase = this.phase + 1 
-                    
-                }
-
-        if (this.phase == 4){
-            this.closePopupDialogue();
-            if(this.measurementList.length >= 5){
-                // preprocess the dialogues
-                tx0 = this.texts[0] + jStat.mean(this.measurementList).toString();
-                this.texts[0] = tx0;
-                //tx1 = "asdsaasda";
-                tx1 = this.texts[1] + this.populationMean.toString();
-                this.texts[1] = tx1;
-                this.phase = this.phase + 1 
-
-                
+                    this.phase = this.phase + 1                    
+		}            
             }
 
             if (this.phase == 5) {
