@@ -56,7 +56,7 @@ var playState = {
                     
                     3:{0:["One of my colleague asked me how confident \n I am about the mean of samples I collected.", "Hmmm. I do we answer that?", "Can you collect some samples to examine confidence intervals?", ""],
                         2:["You must have observed that \nthe confidence interval actually shrinks.", "95% confidence interval tells you that you are \n95% confident that your actual mean belongs to the interval given.",
-                        "As you collect more samples, you have more clues where \nthe actual mean is, so the confidence interval shrinks! ","Now, collect enough samples that the confidence interval width \nis smaller than the sample width.", ""],
+                        "As you collect more samples, you have more clues where \nthe actual mean is, so the confidence interval shrinks! ","Now, collect enough samples that the confidence interval width \nis smaller than the sample stdev.", ""],
                         4:["Good job!", "Now, go back to the lab!", ""]},
                     
                     4:{0:["Wow! We gained a lot of insights about the sample!", "Now, we need to conclude that our samples \nare different from previously collected samples.", 
